@@ -8,7 +8,82 @@
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
+    <Page.Resources>
+        <Style x:Key="BottomPanel" TargetType="StackPanel">
+            <Setter Property="Background" Value="{ThemeResource SystemChromeMediumColor}"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+            <Setter Property="VerticalAlignment" Value="Bottom"></Setter>
+            <Setter Property="Orientation" Value="Horizontal"></Setter>
+        </Style>
+        <Style x:Key="ObjectViewer" TargetType="ListView">
+            <Setter Property="Background" Value="{ThemeResource SystemListMediumColor}"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Left"></Setter>
+            <Setter Property="Margin" Value="0,48,0,60"></Setter>
+            <Setter Property="Width" Value="252"></Setter>
+        </Style>
+        <Style x:Key="Canvas" TargetType="Canvas">
+            <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+            <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
+            <Setter Property="Margin" Value="252,48,0,60"></Setter>
+            <Setter Property="Background" Value="{ThemeResource SystemChromeWhiteColor}"></Setter>
+        </Style>
+    </Page.Resources>
+
     <Grid>
+        <CommandBar
+            x:Name="TopBar"
+            DefaultLabelPosition="Bottom"       
+        >
+            <CommandBar.PrimaryCommands>
+                <AppBarButton Label="Undo" Icon="Undo"/>
+                <AppBarButton Label="Redo" Icon="Redo"/>
+                <AppBarButton Label="Save" Icon="Save"/>
+            </CommandBar.PrimaryCommands>
+
+            <CommandBar.SecondaryCommands>
+                <AppBarButton Label="Save as..." Icon="Save"></AppBarButton>
+            </CommandBar.SecondaryCommands>
+        </CommandBar>
+        <StackPanel
+            Style="{StaticResource BottomPanel}"
+        >
+            <AppBarToggleButton 
+                x:Name="CircleToggle" 
+                Label="Cirlce"
+                Click="BrushToggle_OnClick">
+                <AppBarToggleButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEA3A;"></FontIcon>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarToggleButton 
+                x:Name="RectangleToggle"
+                Label="Rectangle"
+                Click="BrushToggle_OnClick">
+                <AppBarToggleButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE71A;"></FontIcon>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarSeparator/>
+            <AppBarButton Label="Group">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF168;"></FontIcon>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton Label="Ungroup">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF165;"></FontIcon>
+                </AppBarButton.Icon>
+            </AppBarButton>
+        </StackPanel>
+        <ListView
+            Style="{StaticResource ObjectViewer}"
+        >
+        </ListView>
+        <Canvas
+            x:Name="Canvas"
+            Style="{StaticResource Canvas}"
+            Loaded="Canvas_OnLoaded"
+        />
 
     </Grid>
 </Page>

@@ -1,21 +1,14 @@
-﻿using System;
+﻿using DPPaint.Commands;
+using DPPaint.Extensions;
+using DPPaint.Shapes;
 using System.Collections.Generic;
-using System.IO;
+using System.Diagnostics;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Input;
-using Windows.UI.Xaml;
+ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using Windows.UI.Xaml.Shapes;
-
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace DPPaint
 {
@@ -24,31 +17,74 @@ namespace DPPaint
     /// </summary>
     public sealed partial class MainPage : Page
     {
-        private bool clicked = false;
-        private Point clickStart;
-        private Ellipse current;
+        private ClickInvoker _invoker;
+        private ICanvasCommand cmd;
+        private List<BaseShape> _shapeList = new List<BaseShape>();
+        private List<int> selectedItems = new List<int>();
 
         public MainPage()
         {
             this.InitializeComponent();
+            CircleToggle.IsChecked = true;
+            cmd = new DrawShapeCommand(Canvas, _shapeList) {ShapeType = ShapeType.Circle};
+            _invoker = new ClickInvoker();
         }
 
         private void BrushToggle_OnClick(object sender, RoutedEventArgs e)
         {
             if (sender is AppBarToggleButton button)
             {
-                if (button.Name == RectangleToggle.Name)
+                switch (button.Name)
                 {
-                    CircleToggle.IsChecked = false;
-                } else if (button.Name == CircleToggle.Name)
-                {
-                    RectangleToggle.IsChecked = false;
+                    case "MoveToggle":
+                        MoveToggle.IsChecked = true;
+                        ScaleToggle.IsChecked = false;
+                        CircleToggle.IsChecked = false;
+                        RectangleToggle.IsChecked = false;
+                        cmd = new DefaultCommand();
+                        break;
+                    case "ScaleToggle":
+                        MoveToggle.IsChecked = false;
+                        ScaleToggle.IsChecked = true;
+                        CircleToggle.IsChecked = false;
+                        RectangleToggle.IsChecked = false;
+                        cmd = new DefaultCommand();
+                        break;
+                    case "RectangleToggle":
+                        MoveToggle.IsChecked = false;
+                        ScaleToggle.IsChecked = false;
+                        CircleToggle.IsChecked = false;
+                        RectangleToggle.IsChecked = true;
+                        SetDrawCommand(ShapeType.Rectangle);
+                        break;
+                    case "CircleToggle":
+                        MoveToggle.IsChecked = false;
+                        ScaleToggle.IsChecked = false;
+                        CircleToggle.IsChecked = true;
+                        RectangleToggle.IsChecked = false;
+                        SetDrawCommand(ShapeType.Circle);
+                        break;
                 }
             }
+            //if (sender is AppBarToggleButton button)
+            //{
+            //    if (button.Name == RectangleToggle.Name)
+            //    {
+            //        CircleToggle.IsChecked = false;
+            //        RectangleToggle.IsChecked = true;
+            //        SetDrawCommand(ShapeType.Rectangle);
+            //    } else if (button.Name == CircleToggle.Name)
+            //    {
+            //        RectangleToggle.IsChecked = false;
+            //        CircleToggle.IsChecked = true;
+            //        SetDrawCommand(ShapeType.Circle);
+            //    }
+            //}
         }
 
         private void Canvas_OnLoaded(object sender, RoutedEventArgs e)
         {
+            // Register actions to be taken when the canvas is manipulated
             Canvas.PointerPressed += Canvas_OnPointerPressed;
             Canvas.PointerReleased += Canvas_OnPointerReleased;
             Canvas.PointerMoved += Canvas_OnPointerMoved;
@@ -56,48 +92,92 @@ namespace DPPaint
 
         private void Canvas_OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
-            clicked = true;
-            PointerPoint ptrPt = e.GetCurrentPoint(Canvas);
-            clickStart = ptrPt.Position;
-            current = new Ellipse();
-            current.Fill = new SolidColorBrush(Windows.UI.Colors.Black);
-            current.Width = 0;
-            current.Height = 0;
-            current.SetValue(Canvas.LeftProperty, clickStart.X);
-            current.SetValue(Canvas.TopProperty, clickStart.Y);
-            Canvas.Children.Add(current);
-            // throw new NotImplementedException();
+            cmd.PointerEventArgs = e;
+            _invoker.InvokePointerPressed(cmd);
+            UpdateList();
         }
 
         private void Canvas_OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
-            clicked = false;
+            cmd.PointerEventArgs = e;
+            _invoker.InvokePointerReleased(cmd);
         }
 
         private void Canvas_OnPointerMoved(object sender, PointerRoutedEventArgs e)
         {
-            if (clicked)
+            cmd.PointerEventArgs = e;
+            _invoker.InvokePointerMoved(cmd);
+        }
+
+        private void ClearButton_OnClick(object sender, RoutedEventArgs e)
+        {
+            _shapeList.Clear();
+            Canvas.Children.Clear();
+            UpdateList();
+        }
+
+        public void UpdateList()
+        {
+            if (ShapeList.Items != null && ShapeList.Items.Count > 0)
             {
-                PointerPoint currentPoint = e.GetCurrentPoint(Canvas);
-                Point difference = new Point(currentPoint.Position.X - clickStart.X, currentPoint.Position.Y - clickStart.Y);
-                if (difference.X < 0)
+                ShapeList.Items.Clear();
+            }
+
+            for (int i = 0; i < _shapeList.Count; i++)
+            {
+                var item = new ListViewItem()
                 {
-                    current.Width = difference.X * -1;
-                    current.SetValue(Canvas.LeftProperty, clickStart.X + difference.X);
-                }
-                else
+                    Content = $"Shape {i}",
+                    DataContext = _shapeList[i]
+                };
+
+                ShapeList.Items.Add(item);
+            }
+        }
+
+        private void SetDrawCommand(ShapeType type)
+        {
+            if (cmd.GetType() != typeof(DrawShapeCommand) || cmd == null)
+            {
+                cmd = new DrawShapeCommand(Canvas, _shapeList);
+            }
+
+            (cmd as DrawShapeCommand).ShapeType = type;
+        }
+
+        private void ShapeList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            List<int> selectedIndici = new List<int>();
+            foreach (ItemIndexRange range in ShapeList.SelectedRanges)
+            {
+                for (int i = 0; i < range.Length; i++)
                 {
-                    current.Width = difference.X;
+                    int index = range.FirstIndex + i;
+                    selectedIndici.Add(index);
                 }
-                if (difference.Y < 0)
-                {
-                    current.Height = difference.Y * -1;
-                    current.SetValue(Canvas.TopProperty, clickStart.Y + difference.Y);
-                }
-                else
-                {
-                    current.Height = difference.Y;
-                }
+            }
+
+            List<int> newSel = selectedIndici.Where(i => !selectedItems.Contains(i)).ToList();
+            List<int> newDeSel = selectedItems.Where(i => !selectedIndici.Contains(i)).ToList();
+            
+            newSel.ForEach(Select);
+            newDeSel.ForEach(Deselect);
+
+            selectedItems = selectedIndici;
+        }
+
+        private void Select(int listIndex)
+        {
+            _shapeList[listIndex] = _shapeList[listIndex].Select();
+            Canvas.Children.Add(_shapeList[listIndex].Element);
+        }
+
+        private void Deselect(int selected)
+        {
+            if (selected >= 0 && selected < _shapeList.Count)
+            {
+                _shapeList[selected] = _shapeList[selected].Deselect();
+                Canvas.Children.Add(_shapeList[selected].Element);
             }
         }
     }

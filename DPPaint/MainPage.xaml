@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    Background="{ThemeResource SystemChromeMediumColor}">
 
     <Page.Resources>
         <Style x:Key="BottomPanel" TargetType="StackPanel">
@@ -30,11 +30,22 @@
     </Page.Resources>
 
     <Grid>
+        <ListView
+            x:Name="ShapeList"
+            Style="{StaticResource ObjectViewer}"
+            SelectionChanged="ShapeList_OnSelectionChanged"
+            CanReorderItems="False"
+            SelectionMode="Multiple"
+            CanDragItems="False"
+            CanDrag="False"
+        >
+        </ListView>
         <CommandBar
             x:Name="TopBar"
-            DefaultLabelPosition="Bottom"       
+            DefaultLabelPosition="Bottom"
         >
             <CommandBar.PrimaryCommands>
+                <AppBarButton Label="Clear" Icon="Clear" Click="ClearButton_OnClick"/>
                 <AppBarButton Label="Undo" Icon="Undo"/>
                 <AppBarButton Label="Redo" Icon="Redo"/>
                 <AppBarButton Label="Save" Icon="Save"/>
@@ -48,8 +59,24 @@
             Style="{StaticResource BottomPanel}"
         >
             <AppBarToggleButton 
+                x:Name="MoveToggle" 
+                Label="Move"
+                Click="BrushToggle_OnClick">
+                <AppBarToggleButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE759;"></FontIcon>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarToggleButton 
+                x:Name="ScaleToggle"
+                Label="Scale"
+                Click="BrushToggle_OnClick">
+                <AppBarToggleButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE744;"></FontIcon>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarToggleButton 
                 x:Name="CircleToggle" 
-                Label="Cirlce"
+                Label="Circle"
                 Click="BrushToggle_OnClick">
                 <AppBarToggleButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xEA3A;"></FontIcon>
@@ -75,10 +102,6 @@
                 </AppBarButton.Icon>
             </AppBarButton>
         </StackPanel>
-        <ListView
-            Style="{StaticResource ObjectViewer}"
-        >
-        </ListView>
         <Canvas
             x:Name="Canvas"
             Style="{StaticResource Canvas}"

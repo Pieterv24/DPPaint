@@ -46,17 +46,16 @@
         >
             <CommandBar.PrimaryCommands>
                 <AppBarButton Label="Clear" Icon="Clear" Click="ClearButton_OnClick"/>
-                <AppBarButton Label="Undo" Icon="Undo"/>
-                <AppBarButton Label="Redo" Icon="Redo"/>
-                <AppBarButton Label="Save" Icon="Save"/>
+                <AppBarButton Label="Undo" Icon="Undo" Click="UndoButtonClick"/>
+                <AppBarButton Label="Redo" Icon="Redo" Click="RedoButtonClick"/>
+                <AppBarButton Label="Save" Icon="Save" Click="SaveButtonClick"/>
+                <AppBarButton Label="Open"  Icon="OpenFile" Click="OpenButtonClick"/>
             </CommandBar.PrimaryCommands>
-
-            <CommandBar.SecondaryCommands>
-                <AppBarButton Label="Save as..." Icon="Save"></AppBarButton>
-            </CommandBar.SecondaryCommands>
         </CommandBar>
         <StackPanel
             Style="{StaticResource BottomPanel}"
+            Name="BottomPanel"
+            
         >
             <AppBarToggleButton 
                 x:Name="MoveToggle" 

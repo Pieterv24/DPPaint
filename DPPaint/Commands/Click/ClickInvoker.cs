@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Input;
 
-namespace DPPaint.Commands
+namespace DPPaint.Commands.Click
 {
     public class ClickInvoker
     {

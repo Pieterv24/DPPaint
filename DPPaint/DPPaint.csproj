@@ -103,7 +103,9 @@
     <Compile Include="Commands\Click\ScaleCommand.cs" />
     <Compile Include="Commands\UserAction\IUserActionCommand.cs" />
     <Compile Include="Commands\UserAction\OpenFileCommand.cs" />
+    <Compile Include="Commands\UserAction\RedoCommand.cs" />
     <Compile Include="Commands\UserAction\SaveFileCommand.cs" />
+    <Compile Include="Commands\UserAction\UndoCommand.cs" />
     <Compile Include="Commands\UserAction\UserActionInvoker.cs" />
     <Compile Include="Extensions\HelperExtensions.cs" />
     <Compile Include="ICanvasPage.cs" />
@@ -113,8 +115,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Shapes\DecoratorAnchor.cs" />
     <Compile Include="Shapes\PaintBase.cs" />
+    <Compile Include="Shapes\PaintBaseProperties.cs" />
     <Compile Include="Shapes\PaintGroup.cs" />
     <Compile Include="Shapes\PaintShape.cs" />
+    <Compile Include="Shapes\PaintType.cs" />
     <Compile Include="Shapes\ShapeType.cs" />
   </ItemGroup>
   <ItemGroup>

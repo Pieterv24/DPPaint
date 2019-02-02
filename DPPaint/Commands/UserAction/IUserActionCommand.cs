@@ -10,6 +10,8 @@ namespace DPPaint.Commands.UserAction
     public interface IUserActionCommand
     {
         List<PaintBase> ShapeList { get; set; }
+        Stack<List<PaintBase>> UndoStack { get; set; }
+        Stack<List<PaintBase>> RedoStack { get; set; }
 
         void ExecuteUserAction();
 

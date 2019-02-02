@@ -52,6 +52,11 @@ namespace DPPaint.Commands.Click
                     double newX = (paintBase.X + difference.X);
                     double newY = (paintBase.Y + difference.Y);
 
+                    if (paintBase is PaintShape shape)
+                    {
+                        var a = shape.ToString();
+                    }
+
                     if (newY >= 0)
                     {
                         paintBase.Y = newY;

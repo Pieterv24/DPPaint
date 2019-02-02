@@ -177,7 +177,7 @@ namespace DPPaint
 
         public void DrawShape(PaintShape shape)
         {
-            Shape canvasShape = GetShapeByShapeType(shape.ShapeType);
+            Shape canvasShape = shape.ShapeType.GetShape();
 
             canvasShape.Width = shape.Width;
             canvasShape.Height = shape.Height;
@@ -269,21 +269,6 @@ namespace DPPaint
             }
         }
 
-        public Shape GetShapeByShapeType(ShapeType shapeType)
-        {
-            if (shapeType == ShapeType.Circle)
-            {
-                return new Ellipse();
-            }
-
-            if (shapeType == ShapeType.Rectangle)
-            {
-                return new Rectangle();
-            }
-
-            return null;
-        }
-
         private void SetDrawCommand(ShapeType shape)
         {
             _cmd = new DrawShapeCommand(this)
@@ -294,33 +279,31 @@ namespace DPPaint
             };
         }
 
-        private void UndoButtonClick(object sender, RoutedEventArgs e)
+        private async void UndoButtonClick(object sender, RoutedEventArgs e)
         {
-            if (_undoStack.Count > 0)
+            IUserActionCommand cmd = new UndoCommand(this)
             {
-                List<PaintBase> newState = _undoStack.Pop();
-                _redoStack.Push(_shapeList.DeepCopy());
-                _shapeList = newState;
-                Draw();
-                UpdateList();
-            }
+                RedoStack = _redoStack,
+                UndoStack = _undoStack,
+                ShapeList = _shapeList
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
         }
 
-        private void RedoButtonClick(object sender, RoutedEventArgs e)
+        private async void RedoButtonClick(object sender, RoutedEventArgs e)
         {
-            if (_redoStack.Count > 0)
+            IUserActionCommand cmd = new RedoCommand(this)
             {
-                List<PaintBase> newState = _redoStack.Pop();
-                _undoStack.Push(_shapeList.DeepCopy());
-                _shapeList = newState;
-                Draw();
-                UpdateList();
-            }
+                RedoStack = _redoStack,
+                UndoStack = _undoStack,
+                ShapeList = _shapeList
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
         }
 
         private async void SaveButtonClick(object sender, RoutedEventArgs e)
         {
-            IUserActionCommand cmd = new SaveFileCommand(this)
+            IUserActionCommand cmd = new SaveFileCommand()
             {
                 ShapeList = _shapeList
             };
@@ -331,16 +314,11 @@ namespace DPPaint
         {
             IUserActionCommand cmd = new OpenFileCommand(this)
             {
-                ShapeList = _shapeList
+                ShapeList = _shapeList,
+                UndoStack = _undoStack,
+                RedoStack = _redoStack
             };
             await _userInvoker.InvokeUserActionAsync(cmd);
-        }
-
-        public void ClearMemory()
-        {
-            _shapeList.Clear();
-            _undoStack.Clear();
-            _redoStack.Clear();
         }
     }
 }

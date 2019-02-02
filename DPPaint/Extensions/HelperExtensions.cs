@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Shapes;
 using DPPaint.Shapes;
 
 namespace DPPaint.Extensions
@@ -11,23 +12,35 @@ namespace DPPaint.Extensions
     {
         public static List<PaintBase> DeepCopy(this List<PaintBase> list)
         {
-            List<PaintBase> copy = list.Select(baseItem =>
+            List<PaintBase> copy = new List<PaintBase>();
+
+            foreach (PaintBase baseItem in list)
             {
                 if (baseItem is PaintShape shape)
                 {
-                    return new PaintShape(shape);
-                }
-                else if (baseItem is PaintGroup grp)
+                    copy.Add(new PaintShape(shape));
+                } else if (baseItem is PaintGroup group)
                 {
-                    return new PaintGroup(grp);
+                    copy.Add(new PaintGroup(group));
                 }
-                else
-                {
-                    return new PaintBase(baseItem);
-                }
-            }).ToList();
+            }
 
             return copy;
+        }
+
+        public static Shape GetShape(this ShapeType shapeType)
+        {
+            if (shapeType == ShapeType.Circle)
+            {
+                return new Ellipse();
+            }
+
+            if (shapeType == ShapeType.Rectangle)
+            {
+                return new Rectangle();
+            }
+
+            return null;
         }
     }
 }

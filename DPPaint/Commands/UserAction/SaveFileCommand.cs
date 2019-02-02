@@ -9,18 +9,18 @@ using Windows.Storage.Provider;
 using Windows.UI.Xaml.Controls;
 using DPPaint.Shapes;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace DPPaint.Commands.UserAction
 {
     public class SaveFileCommand : IUserActionCommand
     {
         public List<PaintBase> ShapeList { get; set; }
+        public Stack<List<PaintBase>> UndoStack { get; set; }
+        public Stack<List<PaintBase>> RedoStack { get; set; }
 
-        private ICanvasPage _page;
-
-        public SaveFileCommand(ICanvasPage page)
+        public SaveFileCommand()
         {
-            _page = page;
         }
 
         public void ExecuteUserAction()
@@ -30,12 +30,9 @@ namespace DPPaint.Commands.UserAction
 
         public async Task ExecuteUserActionAsync()
         {
-            JsonSerializerSettings settings = new JsonSerializerSettings()
-            {
-                TypeNameHandling = TypeNameHandling.Auto
-            };
-
-            string shapeListJson = JsonConvert.SerializeObject(ShapeList, settings);
+            JArray jsonArray = new JArray();
+            ShapeList.ForEach(paintBase => jsonArray.Add(paintBase.ToJObject()));
+            string shapeListJson = jsonArray.ToString();
 
             FileSavePicker savePicker = new FileSavePicker();
             savePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;

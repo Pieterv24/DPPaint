@@ -12,6 +12,5 @@ namespace DPPaint
         void Draw();
         void UpdateList();
         void AddUndoEntry();
-        void ClearMemory();
     }
 }

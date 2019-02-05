@@ -124,6 +124,7 @@
     <Compile Include="Shapes\ShapeType.cs" />
     <Compile Include="Visitor\IVisitable.cs" />
     <Compile Include="Visitor\IVisitor.cs" />
+    <Compile Include="Visitor\ScaleVisitor.cs" />
     <Compile Include="Visitor\MoveVisitor.cs" />
   </ItemGroup>
   <ItemGroup>

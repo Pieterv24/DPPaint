@@ -7,12 +7,12 @@ using DPPaint.Shapes;
 
 namespace DPPaint.Visitor
 {
-    public class MoveVisitor : IVisitor
+    public class ScaleVisitor : IVisitor
     {
         private readonly double _deltaX;
         private readonly double _deltaY;
 
-        public MoveVisitor(double deltaX, double deltaY)
+        public ScaleVisitor(double deltaX, double deltaY)
         {
             _deltaX = deltaX;
             _deltaY = deltaY;

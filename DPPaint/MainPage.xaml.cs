@@ -42,7 +42,8 @@ namespace DPPaint
             _canvasInvoker = new ClickInvoker();
             _userInvoker = new UserActionInvoker();
             Canvas.SetZIndex(BottomPanel, 100);
-            TopBar.OverflowButtonVisibility = CommandBarOverflowButtonVisibility.Collapsed;
+            Canvas.SetZIndex(TopBar, 100);
+            Canvas.SetZIndex(ShapeList, 100);
         }
 
         private void BrushToggle_OnClick(object sender, RoutedEventArgs e)
@@ -183,7 +184,7 @@ namespace DPPaint
             canvasShape.Height = shape.Height;
             canvasShape.SetValue(Canvas.LeftProperty, shape.X);
             canvasShape.SetValue(Canvas.TopProperty, shape.Y);
-            canvasShape.Scale = shape.Scale != default(Vector3) ? shape.Scale : new Vector3(1f);
+            // canvasShape.Scale = shape.Scale != default(Vector3) ? shape.Scale : new Vector3(1f);
 
             canvasShape.Fill = new SolidColorBrush(Colors.Black);
 
@@ -212,8 +213,8 @@ namespace DPPaint
 
         public void DrawSelector(PaintBase baseShape)
         {
-            double width = baseShape.Width * baseShape.Scale.X;
-            double height = baseShape.Height * baseShape.Scale.Y;
+            double width = baseShape.Width/* * baseShape.Scale.X*/;
+            double height = baseShape.Height/* * baseShape.Scale.Y*/;
 
             double x = baseShape.X;
             double y = baseShape.Y;

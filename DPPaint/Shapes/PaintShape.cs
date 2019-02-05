@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using DPPaint.Visitor;
 using Newtonsoft.Json.Linq;
 
 namespace DPPaint.Shapes

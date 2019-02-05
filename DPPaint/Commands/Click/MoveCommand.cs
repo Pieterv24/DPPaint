@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 using DPPaint.Shapes;
+using DPPaint.Visitor;
 
 namespace DPPaint.Commands.Click
 {
@@ -49,31 +50,7 @@ namespace DPPaint.Commands.Click
 
                 foreach (PaintBase paintBase in _selected)
                 {
-                    double newX = (paintBase.X + difference.X);
-                    double newY = (paintBase.Y + difference.Y);
-
-                    if (paintBase is PaintShape shape)
-                    {
-                        var a = shape.ToString();
-                    }
-
-                    if (newY >= 0)
-                    {
-                        paintBase.Y = newY;
-                    }
-                    else
-                    {
-                        paintBase.Y = 0;
-                    }
-
-                    if (newX >= 0)
-                    {
-                        paintBase.X = newX;
-                    }
-                    else
-                    {
-                        paintBase.X = 0;
-                    }
+                    paintBase.Accept(new MoveVisitor(difference.X, difference.Y));
                 }
             }
 

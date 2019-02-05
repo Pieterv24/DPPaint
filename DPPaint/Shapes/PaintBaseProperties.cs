@@ -11,6 +11,5 @@ namespace DPPaint.Shapes
         public string Decoration { get; set; }
         public bool Selected { get; set; }
         public DecoratorAnchor Anchor { get; set; }
-        public Vector3 Scale { get; set; } = new Vector3(1f);
     }
 }

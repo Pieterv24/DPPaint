@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DPPaint.Shapes;
+using DPPaint.Visitor;
 
 namespace DPPaint.Commands.UserAction
 {

@@ -15,16 +15,22 @@
             <Setter Property="VerticalAlignment" Value="Bottom"></Setter>
             <Setter Property="Orientation" Value="Horizontal"></Setter>
         </Style>
+        <Style x:Key="TopPanel" TargetType="StackPanel">
+            <Setter Property="Background" Value="{ThemeResource SystemChromeMediumColor}"></Setter>
+            <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
+            <Setter Property="VerticalAlignment" Value="Top"></Setter>
+            <Setter Property="Orientation" Value="Horizontal"></Setter>
+        </Style>
         <Style x:Key="ObjectViewer" TargetType="ListView">
-            <Setter Property="Background" Value="{ThemeResource SystemListMediumColor}"></Setter>
+            <Setter Property="Background" Value="{ThemeResource SystemChromeMediumColor}"></Setter>
             <Setter Property="HorizontalAlignment" Value="Left"></Setter>
-            <Setter Property="Margin" Value="0,48,0,60"></Setter>
+            <Setter Property="Margin" Value="0,54,0,54"></Setter>
             <Setter Property="Width" Value="252"></Setter>
         </Style>
         <Style x:Key="Canvas" TargetType="Canvas">
             <Setter Property="HorizontalAlignment" Value="Stretch"></Setter>
             <Setter Property="VerticalAlignment" Value="Stretch"></Setter>
-            <Setter Property="Margin" Value="252,48,0,60"></Setter>
+            <Setter Property="Margin" Value="252,54,0,54"></Setter>
             <Setter Property="Background" Value="{ThemeResource SystemChromeWhiteColor}"></Setter>
         </Style>
     </Page.Resources>
@@ -38,24 +44,23 @@
             SelectionMode="Multiple"
             CanDragItems="False"
             CanDrag="False"
+            VerticalAlignment="Stretch"
         >
         </ListView>
-        <CommandBar
+        <StackPanel
             x:Name="TopBar"
-            DefaultLabelPosition="Bottom"
+            Style="{StaticResource TopPanel}"
+            FlowDirection="RightToLeft"
         >
-            <CommandBar.PrimaryCommands>
-                <AppBarButton Label="Clear" Icon="Clear" Click="ClearButton_OnClick"/>
-                <AppBarButton Label="Undo" Icon="Undo" Click="UndoButtonClick"/>
-                <AppBarButton Label="Redo" Icon="Redo" Click="RedoButtonClick"/>
-                <AppBarButton Label="Save" Icon="Save" Click="SaveButtonClick"/>
-                <AppBarButton Label="Open"  Icon="OpenFile" Click="OpenButtonClick"/>
-            </CommandBar.PrimaryCommands>
-        </CommandBar>
+            <AppBarButton Label="Open"  Icon="OpenFile" Click="OpenButtonClick"/>
+            <AppBarButton Label="Save" Icon="Save" Click="SaveButtonClick"/>
+            <AppBarButton Label="Redo" Icon="Redo" Click="RedoButtonClick"/>
+            <AppBarButton Label="Undo" Icon="Undo" Click="UndoButtonClick"/>
+            <AppBarButton Label="Clear" Icon="Clear" Click="ClearButton_OnClick"/>
+        </StackPanel>
         <StackPanel
             Style="{StaticResource BottomPanel}"
             Name="BottomPanel"
-            
         >
             <AppBarToggleButton 
                 x:Name="MoveToggle" 

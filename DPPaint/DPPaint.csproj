@@ -122,6 +122,9 @@
     <Compile Include="Shapes\PaintShape.cs" />
     <Compile Include="Shapes\PaintType.cs" />
     <Compile Include="Shapes\ShapeType.cs" />
+    <Compile Include="Visitor\IVisitable.cs" />
+    <Compile Include="Visitor\IVisitor.cs" />
+    <Compile Include="Visitor\MoveVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

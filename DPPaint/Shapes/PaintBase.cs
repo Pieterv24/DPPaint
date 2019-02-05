@@ -1,9 +1,10 @@
 ﻿using System.Numerics;
+using DPPaint.Visitor;
 using Newtonsoft.Json.Linq;
 
 namespace DPPaint.Shapes
 {
-    public abstract class PaintBase : PaintBaseProperties
+    public abstract class PaintBase : PaintBaseProperties, IVisitable
     {
         //public double Width { get; set; }
         //public double Height { get; set; }
@@ -27,7 +28,7 @@ namespace DPPaint.Shapes
             Y = paintBase.Y;
             Decoration = paintBase.Decoration;
             Anchor = paintBase.Anchor;
-            Scale = paintBase.Scale;
+            // Scale = paintBase.Scale;
         }
 
         public abstract void Add(PaintBase c);
@@ -36,6 +37,11 @@ namespace DPPaint.Shapes
         public override string ToString()
         {
             return ToJObject().ToString();
+        }
+
+        public void Accept(IVisitor visitor)
+        {
+            visitor.Visit(this);
         }
 
         public virtual JObject ToJObject()
@@ -48,12 +54,12 @@ namespace DPPaint.Shapes
                 { "y", Y },
                 { "decoration", Decoration },
                 { "anchor", (int)Anchor },
-                { "scale", new JObject
-                {
-                    { "x", Scale.X },
-                    { "y", Scale.Y },
-                    { "z", Scale.Z }
-                }}
+                //{ "scale", new JObject
+                //{
+                //    { "x", Scale.X },
+                //    { "y", Scale.Y },
+                //    { "z", Scale.Z }
+                //}}
             };
         }
     }

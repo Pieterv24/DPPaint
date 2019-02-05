@@ -49,15 +49,15 @@ namespace DPPaint.Commands.Click
 
                 foreach (PaintBase paintBase in _selected)
                 {
-                    double currentWidth = paintBase.Width * paintBase.Scale.X;
-                    double currentHeight = paintBase.Height * paintBase.Scale.Y;
+                    //double currentWidth = paintBase.Width * paintBase.Scale.X;
+                    //double currentHeight = paintBase.Height * paintBase.Scale.Y;
 
-                    double newWidth = currentWidth + difference.X;
-                    double newHeight = currentHeight + difference.Y;
+                    //double newWidth = currentWidth + difference.X;
+                    //double newHeight = currentHeight + difference.Y;
 
-                    var newScale = new Vector3((float)(newWidth / paintBase.Width), (float)(newHeight / paintBase.Height), 1f);
+                    //var newScale = new Vector3((float)(newWidth / paintBase.Width), (float)(newHeight / paintBase.Height), 1f);
 
-                    paintBase.Scale = newScale;
+                    //paintBase.Scale = newScale;
                 }
 
                 _page.Draw();

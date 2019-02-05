@@ -90,12 +90,12 @@
                 </AppBarToggleButton.Icon>
             </AppBarToggleButton>
             <AppBarSeparator/>
-            <AppBarButton Label="Group">
+            <AppBarButton Label="Group" Click="GroupButtonClick">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF168;"></FontIcon>
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton Label="Ungroup">
+            <AppBarButton Label="Ungroup" Click="UnGroupButtonClick">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF165;"></FontIcon>
                 </AppBarButton.Icon>

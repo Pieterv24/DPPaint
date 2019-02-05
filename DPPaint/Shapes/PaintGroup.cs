@@ -45,11 +45,37 @@ namespace DPPaint.Shapes
         public override void Add(PaintBase c)
         {
             _children.Add(c);
+
+            RecalculateDimensions();
         }
 
         public override void Remove(PaintBase c)
         {
             _children.Remove(c);
+
+            RecalculateDimensions();
+        }
+
+        private void RecalculateDimensions()
+        {
+            double minX = double.MaxValue;
+            double minY = double.MaxValue;
+            double maxX = double.MinValue;
+            double maxY = double.MinValue;
+
+            foreach (PaintBase paintBase in _children)
+            {
+                minX = paintBase.X < minX ? paintBase.X : minX;
+                minY = paintBase.Y < minY ? paintBase.Y : minY;
+
+                maxX = paintBase.X + paintBase.Width > maxX ? paintBase.X + paintBase.Width : maxX;
+                maxY = paintBase.Y + paintBase.Height > maxY ? paintBase.Y + paintBase.Height : maxY;
+            }
+
+            X = minX;
+            Y = minY;
+            Width = maxX - minX;
+            Height = maxY - minY;
         }
 
         public override string ToString()

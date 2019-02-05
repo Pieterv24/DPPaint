@@ -101,6 +101,8 @@
     <Compile Include="Commands\Click\ICanvasCommand.cs" />
     <Compile Include="Commands\Click\MoveCommand.cs" />
     <Compile Include="Commands\Click\ScaleCommand.cs" />
+    <Compile Include="Commands\UserAction\UnGroupCommand.cs" />
+    <Compile Include="Commands\UserAction\GroupCommand.cs" />
     <Compile Include="Commands\UserAction\IUserActionCommand.cs" />
     <Compile Include="Commands\UserAction\OpenFileCommand.cs" />
     <Compile Include="Commands\UserAction\RedoCommand.cs" />

@@ -163,7 +163,7 @@ namespace DPPaint
                     DrawShape(shape);
                 } else if (baseShape is PaintGroup group)
                 {
-
+                    DrawGroup(group);
                 }
 
 
@@ -197,6 +197,9 @@ namespace DPPaint
                 if (groupChild is PaintShape shape)
                 {
                     DrawShape(shape);
+                } else if (groupChild is PaintGroup childGroup)
+                {
+                    DrawGroup(childGroup);
                 }
             }
         }
@@ -317,6 +320,24 @@ namespace DPPaint
                 ShapeList = _shapeList,
                 UndoStack = _undoStack,
                 RedoStack = _redoStack
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        private async void GroupButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new GroupCommand(this)
+            {
+                ShapeList = _shapeList
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        private async void UnGroupButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new UnGroupCommand(this)
+            {
+                ShapeList = _shapeList
             };
             await _userInvoker.InvokeUserActionAsync(cmd);
         }

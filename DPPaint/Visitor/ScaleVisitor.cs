@@ -23,16 +23,35 @@ namespace DPPaint.Visitor
         {
             if (element is PaintShape shape)
             {
-                shape.X += _deltaX;
-                shape.Y += _deltaY;
+                if (shape.Width + _deltaX > 0 && shape.Height + _deltaY > 0)
+                {
+                    shape.Width += _deltaX;
+                    shape.Height += _deltaY;
+                }
             } else if (element is PaintGroup group)
             {
-                group.X += _deltaX;
-                group.Y += _deltaY;
+                double originalX = group.X;
+                double originalY = group.Y;
 
-                foreach (PaintBase paintBase in group.Children)
+                double groupXMultiplier = (group.Width + _deltaX) / group.Width;
+                double groupYMultiplier = (group.Height + _deltaY) / group.Height;
+
+                if (group.Width + _deltaX > 0 && group.Height + _deltaY > 0)
                 {
-                    paintBase.Accept(this);
+                    group.Width += _deltaX;
+                    group.Height += _deltaY;
+
+                    foreach (PaintBase paintBase in group.Children)
+                    {
+                        double newX = (paintBase.X - originalX) * groupXMultiplier + originalX;
+                        double newY = (paintBase.Y - originalY) * groupYMultiplier + originalY;
+
+                        double newXScale = (paintBase.Width * groupXMultiplier) - paintBase.Width;
+                        double newYScale = (paintBase.Height * groupYMultiplier) - paintBase.Height;
+
+                        paintBase.Accept(new MoveVisitor(newX - paintBase.X, newY - paintBase.Y));
+                        paintBase.Accept(new ScaleVisitor(newXScale, newYScale));
+                    }
                 }
             }
         }

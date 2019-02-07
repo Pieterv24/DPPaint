@@ -122,10 +122,14 @@
     <Compile Include="Shapes\PaintShape.cs" />
     <Compile Include="Shapes\PaintType.cs" />
     <Compile Include="Shapes\ShapeType.cs" />
+    <Compile Include="Strategy\RectangleShape.cs" />
+    <Compile Include="Strategy\CircleShape.cs" />
+    <Compile Include="Strategy\IShapeBase.cs" />
     <Compile Include="Visitor\IVisitable.cs" />
     <Compile Include="Visitor\IVisitor.cs" />
     <Compile Include="Visitor\ScaleVisitor.cs" />
     <Compile Include="Visitor\MoveVisitor.cs" />
+    <Compile Include="Visitor\WriteFileVisitor.cs" />
   </ItemGroup>
   <ItemGroup>
     <AppxManifest Include="Package.appxmanifest">

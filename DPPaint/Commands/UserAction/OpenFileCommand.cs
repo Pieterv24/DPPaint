@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using DPPaint.Shapes;
+using DPPaint.Strategy;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -122,23 +123,6 @@ namespace DPPaint.Commands.UserAction
             overalCompletion = overalCompletion && double.TryParse(jObject.GetValue("x").ToString(), out x);
             overalCompletion = overalCompletion && double.TryParse(jObject.GetValue("y").ToString(), out y);
 
-            float xScale = 1f;
-            float yScale = 1f;
-            float zScale = 1f;
-
-            if (jObject.GetValue("scale") is JObject jScale)
-            {
-                float.TryParse(jScale.GetValue("x").ToString(), out xScale);
-                float.TryParse(jScale.GetValue("y").ToString(), out yScale);
-                float.TryParse(jScale.GetValue("z").ToString(), out zScale);
-            }
-            else
-            {
-                overalCompletion = false;
-            }
-
-            Vector3 scale = new Vector3(xScale, yScale, zScale);
-
             if (overalCompletion)
             {
                 return new PaintBaseProperties
@@ -148,8 +132,7 @@ namespace DPPaint.Commands.UserAction
                     Width = width,
                     Height = height,
                     X = x,
-                    Y = y,
-                    Scale = scale
+                    Y = y
                 };
             }
 
@@ -160,16 +143,18 @@ namespace DPPaint.Commands.UserAction
         {
             if (Enum.TryParse(jObject.GetValue("shapeType").ToString(), out ShapeType type))
             {
-                return new PaintShape
+                IShapeBase shape = null;
+                if (type == ShapeType.Circle) shape = CircleShape.Instance;
+                if (type == ShapeType.Rectangle) shape = RectangleShape.Instance;
+
+                return new PaintShape(shape)
                 {
-                    ShapeType = type,
                     Anchor = baseProps.Anchor,
                     Decoration = baseProps.Decoration,
                     Height = baseProps.Height,
                     Width = baseProps.Width,
                     X = baseProps.X,
-                    Y = baseProps.Y,
-                    Scale = baseProps.Scale
+                    Y = baseProps.Y
                 };
             }
 
@@ -185,8 +170,7 @@ namespace DPPaint.Commands.UserAction
                 Height = baseProps.Height,
                 Width = baseProps.Width,
                 X = baseProps.X,
-                Y = baseProps.Y,
-                Scale = baseProps.Scale
+                Y = baseProps.Y
             };
 
             if (jObject.GetValue("children") is JArray children)

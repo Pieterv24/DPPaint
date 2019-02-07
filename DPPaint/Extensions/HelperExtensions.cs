@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Shapes;
 using DPPaint.Shapes;
+using DPPaint.Strategy;
 
 namespace DPPaint.Extensions
 {
@@ -18,7 +19,10 @@ namespace DPPaint.Extensions
             {
                 if (baseItem is PaintShape shape)
                 {
-                    copy.Add(new PaintShape(shape));
+                    IShapeBase shapeBase = null;
+                    if (shape.GetShapeType() == ShapeType.Circle) shapeBase = CircleShape.Instance;
+                    if (shape.GetShapeType() == ShapeType.Rectangle) shapeBase = RectangleShape.Instance;
+                    copy.Add(new PaintShape(shapeBase, shape));
                 } else if (baseItem is PaintGroup group)
                 {
                     copy.Add(new PaintGroup(group));

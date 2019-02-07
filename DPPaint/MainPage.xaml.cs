@@ -178,17 +178,7 @@ namespace DPPaint
 
         public void DrawShape(PaintShape shape)
         {
-            Shape canvasShape = shape.ShapeType.GetShape();
-
-            canvasShape.Width = shape.Width;
-            canvasShape.Height = shape.Height;
-            canvasShape.SetValue(Canvas.LeftProperty, shape.X);
-            canvasShape.SetValue(Canvas.TopProperty, shape.Y);
-            // canvasShape.Scale = shape.Scale != default(Vector3) ? shape.Scale : new Vector3(1f);
-
-            canvasShape.Fill = new SolidColorBrush(Colors.Black);
-
-            Canvas.Children.Add(canvasShape);
+            Canvas.Children.Add(shape.GetDrawShape());
         }
 
         public void DrawGroup(PaintGroup group)
@@ -257,7 +247,7 @@ namespace DPPaint
                 {
                     if (baseShape is PaintShape paintShape)
                     {
-                        name = paintShape.ShapeType == ShapeType.Circle ? "Circle" : "Rectangle";
+                        name = paintShape.ToString();
                     }
                     else if (baseShape is PaintGroup)
                     {

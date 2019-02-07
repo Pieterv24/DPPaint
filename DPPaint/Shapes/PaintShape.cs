@@ -5,6 +5,8 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.UI.Xaml.Shapes;
+using DPPaint.Strategy;
 using DPPaint.Visitor;
 using Newtonsoft.Json.Linq;
 
@@ -15,16 +17,31 @@ namespace DPPaint.Shapes
     /// </summary>
     public class PaintShape : PaintBase
     {
-        public ShapeType ShapeType { get; set; }
+        private readonly IShapeBase _shape;
 
-        public PaintShape()
+        public PaintShape(IShapeBase shape)
         {
-
+            _shape = shape;
         }
 
-        public PaintShape(PaintShape shape) : base(shape)
+        public PaintShape(IShapeBase shapeBase, PaintShape shape) : base(shape)
         {
-            ShapeType = shape.ShapeType;
+            _shape = shapeBase;
+        }
+
+        public Shape GetDrawShape()
+        {
+            return _shape.GetDrawShape(this);
+        }
+
+        public ShapeType GetShapeType()
+        {
+            return _shape.GetShapeType();
+        }
+
+        public override string ToString()
+        {
+            return _shape.ToString();
         }
 
         public override void Add(PaintBase c)
@@ -33,24 +50,6 @@ namespace DPPaint.Shapes
 
         public override void Remove(PaintBase c)
         {
-        }
-
-        public override string ToString()
-        {
-            return ToJObject().ToString();
-        }
-
-        public override JObject ToJObject()
-        {
-            JObject jObject = new JObject
-            {
-                {"type", (int)PaintType.Shape},
-                { "shapeType", (int) ShapeType}
-            };
-
-            jObject.Merge(base.ToJObject());
-
-            return jObject;
         }
     }
 }

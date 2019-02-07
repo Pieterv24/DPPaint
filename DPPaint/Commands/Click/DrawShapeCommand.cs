@@ -9,6 +9,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Shapes;
 using DPPaint.Shapes;
+using DPPaint.Strategy;
 
 namespace DPPaint.Commands.Click
 {
@@ -32,9 +33,13 @@ namespace DPPaint.Commands.Click
         {
             _page.AddUndoEntry();
             _pointerStart = PointerEventArgs.GetCurrentPoint(Canvas).Position;
-            PaintShape shape = new PaintShape()
+
+            IShapeBase shapeBase = null;
+            if (ShapeType == ShapeType.Circle) shapeBase = CircleShape.Instance;
+            if (ShapeType == ShapeType.Rectangle) shapeBase = RectangleShape.Instance;
+
+            PaintShape shape = new PaintShape(shapeBase)
             {
-                ShapeType = ShapeType,
                 X = _pointerStart.X,
                 Y = _pointerStart.Y
             };

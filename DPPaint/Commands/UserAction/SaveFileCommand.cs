@@ -8,6 +8,7 @@ using Windows.Storage.Pickers;
 using Windows.Storage.Provider;
 using Windows.UI.Xaml.Controls;
 using DPPaint.Shapes;
+using DPPaint.Visitor;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -31,7 +32,12 @@ namespace DPPaint.Commands.UserAction
         public async Task ExecuteUserActionAsync()
         {
             JArray jsonArray = new JArray();
-            ShapeList.ForEach(paintBase => jsonArray.Add(paintBase.ToJObject()));
+            // ShapeList.ForEach(paintBase => jsonArray.Add(paintBase.ToJObject()));
+            ShapeList.ForEach(paintBase =>
+            {
+                paintBase.Accept(new WriteFileVisitor(jsonArray));
+            });
+
             string shapeListJson = jsonArray.ToString();
 
             FileSavePicker savePicker = new FileSavePicker();

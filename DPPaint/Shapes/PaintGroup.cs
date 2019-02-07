@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DPPaint.Strategy;
 using DPPaint.Visitor;
 using Newtonsoft.Json.Linq;
 
@@ -34,7 +35,10 @@ namespace DPPaint.Shapes
             {
                 if (child is PaintShape shape)
                 {
-                    _children.Add(new PaintShape(shape));
+                    IShapeBase shapeBase = null;
+                    if (shape.GetShapeType() == ShapeType.Circle) shapeBase = CircleShape.Instance;
+                    if (shape.GetShapeType() == ShapeType.Rectangle) shapeBase = RectangleShape.Instance;
+                    _children.Add(new PaintShape(shapeBase, shape));
                 }
                 else if (child is PaintGroup grp)
                 {
@@ -57,7 +61,7 @@ namespace DPPaint.Shapes
             RecalculateDimensions();
         }
 
-        private void RecalculateDimensions()
+        public void RecalculateDimensions()
         {
             double minX = double.MaxValue;
             double minY = double.MaxValue;
@@ -77,30 +81,6 @@ namespace DPPaint.Shapes
             Y = minY;
             Width = maxX - minX;
             Height = maxY - minY;
-        }
-
-        public override string ToString()
-        {
-            return ToJObject().ToString();
-        }
-
-        public override JObject ToJObject()
-        {
-            JObject jObject = new JObject
-            {
-                { "type", (int)PaintType.Group }
-            };
-            jObject.Merge(base.ToJObject());
-
-            JArray children = new JArray();
-            foreach (PaintBase paintBase in _children)
-            {
-                children.Add(paintBase.ToJObject());
-            }
-
-            jObject.Add("children", children);
-
-            return jObject;
         }
     }
 }

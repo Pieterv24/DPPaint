@@ -101,6 +101,7 @@
     <Compile Include="Commands\Click\ICanvasCommand.cs" />
     <Compile Include="Commands\Click\MoveCommand.cs" />
     <Compile Include="Commands\Click\ScaleCommand.cs" />
+    <Compile Include="Commands\Click\SelectCommand.cs" />
     <Compile Include="Commands\UserAction\UnGroupCommand.cs" />
     <Compile Include="Commands\UserAction\GroupCommand.cs" />
     <Compile Include="Commands\UserAction\IUserActionCommand.cs" />
@@ -121,7 +122,6 @@
     <Compile Include="Shapes\PaintGroup.cs" />
     <Compile Include="Shapes\PaintShape.cs" />
     <Compile Include="Shapes\PaintType.cs" />
-    <Compile Include="Shapes\ShapeType.cs" />
     <Compile Include="Strategy\RectangleShape.cs" />
     <Compile Include="Strategy\CircleShape.cs" />
     <Compile Include="Strategy\IShapeBase.cs" />

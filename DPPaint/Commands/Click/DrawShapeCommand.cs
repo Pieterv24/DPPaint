@@ -16,7 +16,7 @@ namespace DPPaint.Commands.Click
     public class DrawShapeCommand : ICanvasCommand
     { 
         public PointerRoutedEventArgs PointerEventArgs { get; set; }
-        public ShapeType ShapeType { get; set; }
+        public IShapeBase ShapeType { get; set; }
         public Canvas Canvas { get; set; }
         public List<PaintBase> ShapeList { get; set; }
 
@@ -34,11 +34,7 @@ namespace DPPaint.Commands.Click
             _page.AddUndoEntry();
             _pointerStart = PointerEventArgs.GetCurrentPoint(Canvas).Position;
 
-            IShapeBase shapeBase = null;
-            if (ShapeType == ShapeType.Circle) shapeBase = CircleShape.Instance;
-            if (ShapeType == ShapeType.Rectangle) shapeBase = RectangleShape.Instance;
-
-            PaintShape shape = new PaintShape(shapeBase)
+            PaintShape shape = new PaintShape(ShapeType)
             {
                 X = _pointerStart.X,
                 Y = _pointerStart.Y

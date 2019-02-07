@@ -24,19 +24,14 @@ namespace DPPaint.Shapes
             _shape = shape;
         }
 
-        public PaintShape(IShapeBase shapeBase, PaintShape shape) : base(shape)
+        public PaintShape(PaintShape shape) : base(shape)
         {
-            _shape = shapeBase;
+            _shape = shape._shape;
         }
 
         public Shape GetDrawShape()
         {
             return _shape.GetDrawShape(this);
-        }
-
-        public ShapeType GetShapeType()
-        {
-            return _shape.GetShapeType();
         }
 
         public override string ToString()

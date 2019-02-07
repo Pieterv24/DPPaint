@@ -1,20 +1,15 @@
 ﻿using DPPaint.Commands.Click;
+using DPPaint.Commands.UserAction;
 using DPPaint.Extensions;
 using DPPaint.Shapes;
-using Newtonsoft.Json;
-using System;
+using DPPaint.Strategy;
 using System.Collections.Generic;
-using System.Numerics;
-using Windows.Storage;
-using Windows.Storage.Pickers;
-using Windows.Storage.Provider;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
-using DPPaint.Commands.UserAction;
 
 namespace DPPaint
 {
@@ -38,9 +33,11 @@ namespace DPPaint
             _undoStack = new Stack<List<PaintBase>>();
             _redoStack = new Stack<List<PaintBase>>();
             CircleToggle.IsChecked = true;
-            SetDrawCommand(ShapeType.Circle);
+            SetDrawCommand(CircleShape.Instance);
             _canvasInvoker = new ClickInvoker();
             _userInvoker = new UserActionInvoker();
+
+            // Set canvas Z indici
             Canvas.SetZIndex(BottomPanel, 100);
             Canvas.SetZIndex(TopBar, 100);
             Canvas.SetZIndex(ShapeList, 100);
@@ -52,7 +49,20 @@ namespace DPPaint
             {
                 switch (button.Name)
                 {
+                    case "SelectToggle":
+                        SelectToggle.IsChecked = true;
+                        MoveToggle.IsChecked = false;
+                        ScaleToggle.IsChecked = false;
+                        CircleToggle.IsChecked = false;
+                        RectangleToggle.IsChecked = false;
+                        _cmd = new SelectCommand(this)
+                        {
+                            Canvas = Canvas,
+                            ShapeList = _shapeList
+                        };
+                        break;
                     case "MoveToggle":
+                        SelectToggle.IsChecked = false;
                         MoveToggle.IsChecked = true;
                         ScaleToggle.IsChecked = false;
                         CircleToggle.IsChecked = false;
@@ -64,6 +74,7 @@ namespace DPPaint
                         };
                         break;
                     case "ScaleToggle":
+                        SelectToggle.IsChecked = false;
                         MoveToggle.IsChecked = false;
                         ScaleToggle.IsChecked = true;
                         CircleToggle.IsChecked = false;
@@ -75,18 +86,20 @@ namespace DPPaint
                         };
                         break;
                     case "RectangleToggle":
+                        SelectToggle.IsChecked = false;
                         MoveToggle.IsChecked = false;
                         ScaleToggle.IsChecked = false;
                         CircleToggle.IsChecked = false;
                         RectangleToggle.IsChecked = true;
-                        SetDrawCommand(ShapeType.Rectangle);
+                        SetDrawCommand(RectangleShape.Instance);
                         break;
                     case "CircleToggle":
+                        SelectToggle.IsChecked = false;
                         MoveToggle.IsChecked = false;
                         ScaleToggle.IsChecked = false;
                         CircleToggle.IsChecked = true;
                         RectangleToggle.IsChecked = false;
-                        SetDrawCommand(ShapeType.Circle);
+                        SetDrawCommand(CircleShape.Instance);
                         break;
                 }
             }
@@ -203,8 +216,8 @@ namespace DPPaint
 
         public void DrawSelector(PaintBase baseShape)
         {
-            double width = baseShape.Width/* * baseShape.Scale.X*/;
-            double height = baseShape.Height/* * baseShape.Scale.Y*/;
+            double width = baseShape.Width;
+            double height = baseShape.Height;
 
             double x = baseShape.X;
             double y = baseShape.Y;
@@ -263,7 +276,7 @@ namespace DPPaint
             }
         }
 
-        private void SetDrawCommand(ShapeType shape)
+        private void SetDrawCommand(IShapeBase shape)
         {
             _cmd = new DrawShapeCommand(this)
             {

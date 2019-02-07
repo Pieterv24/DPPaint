@@ -32,7 +32,6 @@ namespace DPPaint.Commands.UserAction
         public async Task ExecuteUserActionAsync()
         {
             JArray jsonArray = new JArray();
-            // ShapeList.ForEach(paintBase => jsonArray.Add(paintBase.ToJObject()));
             ShapeList.ForEach(paintBase =>
             {
                 paintBase.Accept(new WriteFileVisitor(jsonArray));

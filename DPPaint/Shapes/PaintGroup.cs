@@ -35,10 +35,7 @@ namespace DPPaint.Shapes
             {
                 if (child is PaintShape shape)
                 {
-                    IShapeBase shapeBase = null;
-                    if (shape.GetShapeType() == ShapeType.Circle) shapeBase = CircleShape.Instance;
-                    if (shape.GetShapeType() == ShapeType.Rectangle) shapeBase = RectangleShape.Instance;
-                    _children.Add(new PaintShape(shapeBase, shape));
+                    _children.Add(new PaintShape(shape));
                 }
                 else if (child is PaintGroup grp)
                 {
@@ -61,7 +58,7 @@ namespace DPPaint.Shapes
             RecalculateDimensions();
         }
 
-        public void RecalculateDimensions()
+        private void RecalculateDimensions()
         {
             double minX = double.MaxValue;
             double minY = double.MaxValue;

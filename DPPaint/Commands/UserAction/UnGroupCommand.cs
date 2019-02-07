@@ -14,7 +14,7 @@ namespace DPPaint.Commands.UserAction
         public Stack<List<PaintBase>> UndoStack { get; set; }
         public Stack<List<PaintBase>> RedoStack { get; set; }
 
-        private ICanvasPage _page;
+        private readonly ICanvasPage _page;
 
         public UnGroupCommand(ICanvasPage page)
         {

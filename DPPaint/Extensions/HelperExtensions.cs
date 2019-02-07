@@ -19,10 +19,7 @@ namespace DPPaint.Extensions
             {
                 if (baseItem is PaintShape shape)
                 {
-                    IShapeBase shapeBase = null;
-                    if (shape.GetShapeType() == ShapeType.Circle) shapeBase = CircleShape.Instance;
-                    if (shape.GetShapeType() == ShapeType.Rectangle) shapeBase = RectangleShape.Instance;
-                    copy.Add(new PaintShape(shapeBase, shape));
+                    copy.Add(new PaintShape(shape));
                 } else if (baseItem is PaintGroup group)
                 {
                     copy.Add(new PaintGroup(group));
@@ -30,21 +27,6 @@ namespace DPPaint.Extensions
             }
 
             return copy;
-        }
-
-        public static Shape GetShape(this ShapeType shapeType)
-        {
-            if (shapeType == ShapeType.Circle)
-            {
-                return new Ellipse();
-            }
-
-            if (shapeType == ShapeType.Rectangle)
-            {
-                return new Rectangle();
-            }
-
-            return null;
         }
     }
 }

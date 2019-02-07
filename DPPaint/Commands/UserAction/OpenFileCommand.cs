@@ -45,10 +45,6 @@ namespace DPPaint.Commands.UserAction
             {
                 string jsonString = await FileIO.ReadTextAsync(file);
 
-                //List<PaintBase> deserialized = JsonConvert.DeserializeObject<List<PaintBase>>(jsonString, new JsonSerializerSettings()
-                //{
-                //    TypeNameHandling = TypeNameHandling.Auto
-                //});
                 List<PaintBase> newShapeList = DeserializeJsonSave(jsonString);
 
                 // Clear undo, redo and master list
@@ -141,11 +137,11 @@ namespace DPPaint.Commands.UserAction
 
         private PaintShape GetPaintShape(JObject jObject, PaintBaseProperties baseProps)
         {
-            if (Enum.TryParse(jObject.GetValue("shapeType").ToString(), out ShapeType type))
+            if (jObject.GetValue("shapeType").ToString() == CircleShape.Instance.ToString() || jObject.GetValue("shapeType").ToString() == RectangleShape.Instance.ToString())
             {
                 IShapeBase shape = null;
-                if (type == ShapeType.Circle) shape = CircleShape.Instance;
-                if (type == ShapeType.Rectangle) shape = RectangleShape.Instance;
+                if (jObject.GetValue("shapeType").ToString() == CircleShape.Instance.ToString()) shape = CircleShape.Instance;
+                if (jObject.GetValue("shapeType").ToString() == RectangleShape.Instance.ToString()) shape = RectangleShape.Instance;
 
                 return new PaintShape(shape)
                 {

@@ -63,6 +63,14 @@
             Name="BottomPanel"
         >
             <AppBarToggleButton 
+                x:Name="SelectToggle" 
+                Label="Select"
+                Click="BrushToggle_OnClick">
+                <AppBarToggleButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF271;"></FontIcon>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarToggleButton 
                 x:Name="MoveToggle" 
                 Label="Move"
                 Click="BrushToggle_OnClick">

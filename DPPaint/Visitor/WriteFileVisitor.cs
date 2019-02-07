@@ -24,7 +24,7 @@ namespace DPPaint.Visitor
                 JObject jObject = new JObject
                 {
                     {"type", (int)PaintType.Shape},
-                    { "shapeType", (int) shape.GetShapeType()}
+                    { "shapeType", shape.ToString()}
                 };
                 jObject.Merge(getBaseJObject(shape));
 

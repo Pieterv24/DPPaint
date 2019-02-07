@@ -13,7 +13,8 @@ namespace DPPaint.Strategy
 {
     public class RectangleShape : IShapeBase
     {
-        private static RectangleShape instance = null;
+        private static RectangleShape _instance = null;
+        private static readonly object Mutex = new object();
 
         private RectangleShape()
         {
@@ -24,12 +25,15 @@ namespace DPPaint.Strategy
         {
             get
             {
-                if (instance == null)
+                lock (Mutex)
                 {
-                    instance = new RectangleShape();
-                }
+                    if (_instance == null)
+                    {
+                        _instance = new RectangleShape();
+                    }
 
-                return instance;
+                    return _instance;
+                }
             }
         }
 
@@ -50,9 +54,9 @@ namespace DPPaint.Strategy
             return drawShape;
         }
 
-        public ShapeType GetShapeType()
+        public IShapeBase GetShapeBase()
         {
-            return ShapeType.Circle;
+            return Instance;
         }
 
         public override string ToString()

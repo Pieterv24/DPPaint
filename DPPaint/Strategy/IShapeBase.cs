@@ -11,7 +11,6 @@ namespace DPPaint.Strategy
     public interface IShapeBase
     {
         Shape GetDrawShape(PaintBase paintBase);
-        ShapeType GetShapeType();
         string ToString();
     }
 }

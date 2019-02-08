@@ -63,11 +63,19 @@
             Name="BottomPanel"
         >
             <AppBarToggleButton 
-                x:Name="SelectToggle" 
+                x:Name="ClickSelectToggle" 
                 Label="Select"
                 Click="BrushToggle_OnClick">
                 <AppBarToggleButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF271;"></FontIcon>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarToggleButton 
+                x:Name="SelectToggle" 
+                Label="Select Multiple"
+                Click="BrushToggle_OnClick">
+                <AppBarToggleButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE8B3;"></FontIcon>
                 </AppBarToggleButton.Icon>
             </AppBarToggleButton>
             <AppBarToggleButton 
@@ -111,6 +119,11 @@
             <AppBarButton Label="Ungroup" Click="UnGroupButtonClick">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF165;"></FontIcon>
+                </AppBarButton.Icon>
+            </AppBarButton>
+            <AppBarButton Label="Delete" Click="DeleteButtonClick">
+                <AppBarButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;"></FontIcon>
                 </AppBarButton.Icon>
             </AppBarButton>
         </StackPanel>

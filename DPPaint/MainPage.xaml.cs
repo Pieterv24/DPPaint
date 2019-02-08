@@ -32,10 +32,15 @@ namespace DPPaint
             _shapeList = new List<PaintBase>();
             _undoStack = new Stack<List<PaintBase>>();
             _redoStack = new Stack<List<PaintBase>>();
-            CircleToggle.IsChecked = true;
-            SetDrawCommand(CircleShape.Instance);
+
             _canvasInvoker = new ClickInvoker();
             _userInvoker = new UserActionInvoker();
+
+            CircleToggle.IsChecked = true;
+            _cmd = new DrawShapeCommand(this)
+            {
+                ShapeType = CircleShape.Instance
+            };
 
             // Set canvas Z indici
             Canvas.SetZIndex(BottomPanel, 100);
@@ -47,59 +52,44 @@ namespace DPPaint
         {
             if (sender is AppBarToggleButton button)
             {
+                ClickSelectToggle.IsChecked = false;
+                SelectToggle.IsChecked = false;
+                MoveToggle.IsChecked = false;
+                ScaleToggle.IsChecked = false;
+                CircleToggle.IsChecked = false;
+                RectangleToggle.IsChecked = false;
+
                 switch (button.Name)
                 {
+                    case "ClickSelectToggle":
+                        ClickSelectToggle.IsChecked = true;
+                        _cmd = new ClickSelectCommand(this);
+                        break;
                     case "SelectToggle":
                         SelectToggle.IsChecked = true;
-                        MoveToggle.IsChecked = false;
-                        ScaleToggle.IsChecked = false;
-                        CircleToggle.IsChecked = false;
-                        RectangleToggle.IsChecked = false;
-                        _cmd = new SelectCommand(this)
-                        {
-                            Canvas = Canvas,
-                            ShapeList = _shapeList
-                        };
+                        _cmd = new SelectCommand(this);
                         break;
                     case "MoveToggle":
-                        SelectToggle.IsChecked = false;
                         MoveToggle.IsChecked = true;
-                        ScaleToggle.IsChecked = false;
-                        CircleToggle.IsChecked = false;
-                        RectangleToggle.IsChecked = false;
-                        _cmd = new MoveCommand(this)
-                        {
-                            Canvas = Canvas,
-                            ShapeList = _shapeList
-                        };
+                        _cmd = new MoveCommand(this);
                         break;
                     case "ScaleToggle":
-                        SelectToggle.IsChecked = false;
-                        MoveToggle.IsChecked = false;
                         ScaleToggle.IsChecked = true;
-                        CircleToggle.IsChecked = false;
-                        RectangleToggle.IsChecked = false;
-                        _cmd = new ScaleCommand(this)
-                        {
-                            Canvas = Canvas,
-                            ShapeList = _shapeList
-                        };
+                        _cmd = new ScaleCommand(this);
                         break;
                     case "RectangleToggle":
-                        SelectToggle.IsChecked = false;
-                        MoveToggle.IsChecked = false;
-                        ScaleToggle.IsChecked = false;
-                        CircleToggle.IsChecked = false;
                         RectangleToggle.IsChecked = true;
-                        SetDrawCommand(RectangleShape.Instance);
+                        _cmd = new DrawShapeCommand(this)
+                        {
+                            ShapeType = RectangleShape.Instance
+                        };
                         break;
                     case "CircleToggle":
-                        SelectToggle.IsChecked = false;
-                        MoveToggle.IsChecked = false;
-                        ScaleToggle.IsChecked = false;
                         CircleToggle.IsChecked = true;
-                        RectangleToggle.IsChecked = false;
-                        SetDrawCommand(CircleShape.Instance);
+                        _cmd = new DrawShapeCommand(this)
+                        {
+                            ShapeType = CircleShape.Instance
+                        };
                         break;
                 }
             }
@@ -113,10 +103,15 @@ namespace DPPaint
             Canvas.PointerMoved += Canvas_OnPointerMoved;
         }
 
+        #region Canvas pointer actions
+
         private void Canvas_OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             _cmd.PointerEventArgs = e;
             _cmd.ShapeList = _shapeList;
+            _cmd.RedoStack = _redoStack;
+            _cmd.UndoStack = _undoStack;
+            _cmd.Canvas = Canvas;
             _canvasInvoker.InvokePointerPressed(_cmd);
         }
 
@@ -124,6 +119,9 @@ namespace DPPaint
         {
             _cmd.PointerEventArgs = e;
             _cmd.ShapeList = _shapeList;
+            _cmd.RedoStack = _redoStack;
+            _cmd.UndoStack = _undoStack;
+            _cmd.Canvas = Canvas;
             _canvasInvoker.InvokePointerReleased(_cmd);
         }
 
@@ -131,40 +129,106 @@ namespace DPPaint
         {
             _cmd.PointerEventArgs = e;
             _cmd.ShapeList = _shapeList;
+            _cmd.RedoStack = _redoStack;
+            _cmd.UndoStack = _undoStack;
+            _cmd.Canvas = Canvas;
             _canvasInvoker.InvokePointerMoved(_cmd);
         }
 
+        #endregion
+
+        #region User Action Methods
+
         private void ClearButton_OnClick(object sender, RoutedEventArgs e)
         {
-            AddUndoEntry();
+            _undoStack.Push(_shapeList.DeepCopy());
+            _redoStack.Clear();
             _shapeList.Clear();
 
             Draw();
             UpdateList();
         }
 
-        private void ShapeList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void UndoButtonClick(object sender, RoutedEventArgs e)
         {
-            foreach (var added in e.AddedItems)
+            IUserActionCommand cmd = new UndoCommand(this)
             {
-                int index = ShapeList.Items.IndexOf(added);
-                if (index >= 0 && index <= _shapeList.Count)
-                {
-                    _shapeList[index].Selected = true;
-                }
-            }
-
-            foreach (var removed in e.RemovedItems)
-            {
-                int index = ShapeList.Items.IndexOf(removed);
-                if (index >= 0 && index <= _shapeList.Count)
-                {
-                    _shapeList[index].Selected = false;
-                }
-            }
-
-            Draw();
+                RedoStack = _redoStack,
+                UndoStack = _undoStack,
+                ShapeList = _shapeList
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
         }
+
+        private async void RedoButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new RedoCommand(this)
+            {
+                RedoStack = _redoStack,
+                UndoStack = _undoStack,
+                ShapeList = _shapeList
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        private async void SaveButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new SaveFileCommand()
+            {
+                ShapeList = _shapeList,
+                UndoStack = _undoStack,
+                RedoStack = _redoStack
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        private async void OpenButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new OpenFileCommand(this)
+            {
+                ShapeList = _shapeList,
+                UndoStack = _undoStack,
+                RedoStack = _redoStack
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        private async void GroupButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new GroupCommand(this)
+            {
+                ShapeList = _shapeList,
+                UndoStack = _undoStack,
+                RedoStack = _redoStack
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        private async void UnGroupButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new UnGroupCommand(this)
+            {
+                ShapeList = _shapeList,
+                UndoStack = _undoStack,
+                RedoStack = _redoStack
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        private async void DeleteButtonClick(object sender, RoutedEventArgs e)
+        {
+            IUserActionCommand cmd = new DeleteItemCommand(this)
+            {
+                ShapeList = _shapeList,
+                UndoStack = _undoStack,
+                RedoStack = _redoStack
+            };
+            await _userInvoker.InvokeUserActionAsync(cmd);
+        }
+
+        #endregion
+
+        #region Draw Methods
 
         public void Draw()
         {
@@ -175,7 +239,8 @@ namespace DPPaint
                 if (baseShape is PaintShape shape)
                 {
                     DrawShape(shape);
-                } else if (baseShape is PaintGroup group)
+                }
+                else if (baseShape is PaintGroup group)
                 {
                     DrawGroup(group);
                 }
@@ -201,17 +266,12 @@ namespace DPPaint
                 if (groupChild is PaintShape shape)
                 {
                     DrawShape(shape);
-                } else if (groupChild is PaintGroup childGroup)
+                }
+                else if (groupChild is PaintGroup childGroup)
                 {
                     DrawGroup(childGroup);
                 }
             }
-        }
-
-        public void AddUndoEntry()
-        {
-            _undoStack.Push(_shapeList.DeepCopy());
-            _redoStack.Clear();
         }
 
         public void DrawSelector(PaintBase baseShape)
@@ -244,9 +304,36 @@ namespace DPPaint
             Canvas.Children.Add(selectorSquare);
         }
 
+        #endregion
+
+        #region Selector list Methods
+
+        private void ShapeList_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            foreach (var added in e.AddedItems)
+            {
+                int index = ShapeList.Items.IndexOf(added);
+                if (index >= 0 && index <= _shapeList.Count)
+                {
+                    _shapeList[index].Selected = true;
+                }
+            }
+
+            foreach (var removed in e.RemovedItems)
+            {
+                int index = ShapeList.Items.IndexOf(removed);
+                if (index >= 0 && index <= _shapeList.Count)
+                {
+                    _shapeList[index].Selected = false;
+                }
+            }
+
+            Draw();
+        }
+
         public void UpdateList()
         {
-            ShapeList.Items.Clear();
+            ShapeList.Items?.Clear();
 
             foreach (PaintBase baseShape in _shapeList)
             {
@@ -276,74 +363,6 @@ namespace DPPaint
             }
         }
 
-        private void SetDrawCommand(IShapeBase shape)
-        {
-            _cmd = new DrawShapeCommand(this)
-            {
-                Canvas = Canvas,
-                ShapeType = shape,
-                ShapeList = _shapeList
-            };
-        }
-
-        private async void UndoButtonClick(object sender, RoutedEventArgs e)
-        {
-            IUserActionCommand cmd = new UndoCommand(this)
-            {
-                RedoStack = _redoStack,
-                UndoStack = _undoStack,
-                ShapeList = _shapeList
-            };
-            await _userInvoker.InvokeUserActionAsync(cmd);
-        }
-
-        private async void RedoButtonClick(object sender, RoutedEventArgs e)
-        {
-            IUserActionCommand cmd = new RedoCommand(this)
-            {
-                RedoStack = _redoStack,
-                UndoStack = _undoStack,
-                ShapeList = _shapeList
-            };
-            await _userInvoker.InvokeUserActionAsync(cmd);
-        }
-
-        private async void SaveButtonClick(object sender, RoutedEventArgs e)
-        {
-            IUserActionCommand cmd = new SaveFileCommand()
-            {
-                ShapeList = _shapeList
-            };
-            await _userInvoker.InvokeUserActionAsync(cmd);
-        }
-
-        private async void OpenButtonClick(object sender, RoutedEventArgs e)
-        {
-            IUserActionCommand cmd = new OpenFileCommand(this)
-            {
-                ShapeList = _shapeList,
-                UndoStack = _undoStack,
-                RedoStack = _redoStack
-            };
-            await _userInvoker.InvokeUserActionAsync(cmd);
-        }
-
-        private async void GroupButtonClick(object sender, RoutedEventArgs e)
-        {
-            IUserActionCommand cmd = new GroupCommand(this)
-            {
-                ShapeList = _shapeList
-            };
-            await _userInvoker.InvokeUserActionAsync(cmd);
-        }
-
-        private async void UnGroupButtonClick(object sender, RoutedEventArgs e)
-        {
-            IUserActionCommand cmd = new UnGroupCommand(this)
-            {
-                ShapeList = _shapeList
-            };
-            await _userInvoker.InvokeUserActionAsync(cmd);
-        }
+        #endregion
     }
 }

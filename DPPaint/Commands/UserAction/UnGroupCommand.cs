@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DPPaint.Extensions;
 using DPPaint.Shapes;
 
 namespace DPPaint.Commands.UserAction
@@ -32,7 +33,8 @@ namespace DPPaint.Commands.UserAction
 
             if (selected.Count > 0)
             {
-                _page.AddUndoEntry();
+                UndoStack.Push(ShapeList.DeepCopy());
+                RedoStack.Clear();
 
                 foreach (PaintBase paintBase in selected)
                 {

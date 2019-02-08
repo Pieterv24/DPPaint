@@ -8,6 +8,7 @@ using Windows.UI.Input;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Shapes;
+using DPPaint.Extensions;
 using DPPaint.Shapes;
 using DPPaint.Strategy;
 
@@ -18,6 +19,8 @@ namespace DPPaint.Commands.Click
         public PointerRoutedEventArgs PointerEventArgs { get; set; }
         public IShapeBase ShapeType { get; set; }
         public Canvas Canvas { get; set; }
+        public Stack<List<PaintBase>> UndoStack { get; set; }
+        public Stack<List<PaintBase>> RedoStack { get; set; }
         public List<PaintBase> ShapeList { get; set; }
 
         private readonly ICanvasPage _page;
@@ -31,7 +34,9 @@ namespace DPPaint.Commands.Click
 
         public void PointerPressedExecute()
         {
-            _page.AddUndoEntry();
+            UndoStack.Push(ShapeList.DeepCopy());
+            RedoStack.Clear();
+
             _pointerStart = PointerEventArgs.GetCurrentPoint(Canvas).Position;
 
             PaintShape shape = new PaintShape(ShapeType)

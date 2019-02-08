@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using DPPaint.Extensions;
 using DPPaint.Shapes;
 using DPPaint.Visitor;
 
@@ -16,6 +17,8 @@ namespace DPPaint.Commands.Click
     {
         public PointerRoutedEventArgs PointerEventArgs { get; set; }
         public Canvas Canvas { get; set; }
+        public Stack<List<PaintBase>> UndoStack { get; set; }
+        public Stack<List<PaintBase>> RedoStack { get; set; }
         public List<PaintBase> ShapeList { get; set; }
 
         private readonly ICanvasPage _page;
@@ -30,7 +33,9 @@ namespace DPPaint.Commands.Click
 
         public void PointerPressedExecute()
         {
-            _page.AddUndoEntry();
+            UndoStack.Push(ShapeList.DeepCopy());
+            RedoStack.Clear();
+
             _prevPointer = PointerEventArgs.GetCurrentPoint(Canvas).Position;
             _selected = ShapeList.Where(bs => bs.Selected).ToList();
         }

@@ -14,6 +14,8 @@ namespace DPPaint.Commands.Click
     {
         public PointerRoutedEventArgs PointerEventArgs { get; set; }
         public Canvas Canvas { get; set; }
+        public Stack<List<PaintBase>> UndoStack { get; set; }
+        public Stack<List<PaintBase>> RedoStack { get; set; }
         public List<PaintBase> ShapeList { get; set; }
 
         public void PointerPressedExecute()

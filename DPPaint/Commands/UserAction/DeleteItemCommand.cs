@@ -2,15 +2,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using DPPaint.Extensions;
 using DPPaint.Shapes;
-using DPPaint.Visitor;
 
 namespace DPPaint.Commands.UserAction
 {
-    public class GroupCommand : IUserActionCommand
+    public class DeleteItemCommand : IUserActionCommand
     {
         public List<PaintBase> ShapeList { get; set; }
         public Stack<List<PaintBase>> UndoStack { get; set; }
@@ -18,7 +16,7 @@ namespace DPPaint.Commands.UserAction
 
         private readonly ICanvasPage _page;
 
-        public GroupCommand(ICanvasPage page)
+        public DeleteItemCommand(ICanvasPage page)
         {
             _page = page;
         }
@@ -30,28 +28,18 @@ namespace DPPaint.Commands.UserAction
 
         public Task ExecuteUserActionAsync()
         {
+            UndoStack.Push(ShapeList.DeepCopy());
+            RedoStack.Clear();
+
             List<PaintBase> selected = ShapeList.Where(pb => pb.Selected).ToList();
 
-            if (selected.Count > 1)
+            foreach (PaintBase paintBase in selected)
             {
-                UndoStack.Push(ShapeList.DeepCopy());
-                RedoStack.Clear();
-
-                PaintGroup newGroup = new PaintGroup()
-                {
-                    Selected = true
-                };
-                foreach (PaintBase paintBase in selected)
-                {
-                    ShapeList.Remove(paintBase);
-                    newGroup.Add(paintBase);
-                }
-
-                ShapeList.Add(newGroup);
-
-                _page.Draw();
-                _page.UpdateList();
+                ShapeList.Remove(paintBase);
             }
+
+            _page.Draw();
+            _page.UpdateList();
 
             return Task.CompletedTask;
         }

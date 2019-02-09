@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
+using DPPaint.Decorators;
 using DPPaint.Strategy;
 using DPPaint.Visitor;
 using Newtonsoft.Json.Linq;
@@ -14,10 +16,17 @@ namespace DPPaint.Shapes
     /// </summary>
     public class PaintGroup : PaintBase
     {
-        private readonly List<PaintBase> _children;
+        public override double Width { get; set; }
+        public override double Height { get; set; }
+        public override double X { get; set; }
+        public override double Y { get; set; }
+        public override bool Selected { get; set; }
 
         // Set public Get Property to enable read only access of children
         public IReadOnlyCollection<PaintBase> Children => _children;
+
+
+        private readonly List<PaintBase> _children;
 
         public PaintGroup()
         {
@@ -41,6 +50,10 @@ namespace DPPaint.Shapes
                 {
                     _children.Add(new PaintGroup(grp));
                 }
+                else if (child is TextDecoration decoration)
+                {
+                    _children.Add(decoration.DeepCopy());
+                }
             }
         }
 
@@ -56,6 +69,16 @@ namespace DPPaint.Shapes
             _children.Remove(c);
 
             RecalculateDimensions();
+        }
+
+        public override void DrawOnCanvas(Canvas canvas)
+        {
+            if (Selected) base.DrawSelector(canvas);
+
+            foreach (PaintBase paintBase in Children)
+            {
+                paintBase.DrawOnCanvas(canvas);
+            }
         }
 
         private void RecalculateDimensions()

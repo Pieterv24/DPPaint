@@ -4,12 +4,14 @@ using DPPaint.Extensions;
 using DPPaint.Shapes;
 using DPPaint.Strategy;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using DPPaint.Decorators;
 
 namespace DPPaint
 {
@@ -58,6 +60,7 @@ namespace DPPaint
                 ScaleToggle.IsChecked = false;
                 CircleToggle.IsChecked = false;
                 RectangleToggle.IsChecked = false;
+                EditDecorator.IsChecked = false;
 
                 switch (button.Name)
                 {
@@ -68,6 +71,10 @@ namespace DPPaint
                     case "SelectToggle":
                         SelectToggle.IsChecked = true;
                         _cmd = new SelectCommand(this);
+                        break;
+                    case "EditDecorator":
+                        EditDecorator.IsChecked = true;
+                        _cmd = new ChangeDecoratorCommand(this);
                         break;
                     case "MoveToggle":
                         MoveToggle.IsChecked = true;
@@ -105,34 +112,34 @@ namespace DPPaint
 
         #region Canvas pointer actions
 
-        private void Canvas_OnPointerPressed(object sender, PointerRoutedEventArgs e)
+        private async void Canvas_OnPointerPressed(object sender, PointerRoutedEventArgs e)
         {
             _cmd.PointerEventArgs = e;
             _cmd.ShapeList = _shapeList;
             _cmd.RedoStack = _redoStack;
             _cmd.UndoStack = _undoStack;
             _cmd.Canvas = Canvas;
-            _canvasInvoker.InvokePointerPressed(_cmd);
+            await _canvasInvoker.InvokePointerPressedAsync(_cmd);
         }
 
-        private void Canvas_OnPointerReleased(object sender, PointerRoutedEventArgs e)
+        private async void Canvas_OnPointerReleased(object sender, PointerRoutedEventArgs e)
         {
             _cmd.PointerEventArgs = e;
             _cmd.ShapeList = _shapeList;
             _cmd.RedoStack = _redoStack;
             _cmd.UndoStack = _undoStack;
             _cmd.Canvas = Canvas;
-            _canvasInvoker.InvokePointerReleased(_cmd);
+            await _canvasInvoker.InvokePointerReleasedAsync(_cmd);
         }
 
-        private void Canvas_OnPointerMoved(object sender, PointerRoutedEventArgs e)
+        private async void Canvas_OnPointerMoved(object sender, PointerRoutedEventArgs e)
         {
             _cmd.PointerEventArgs = e;
             _cmd.ShapeList = _shapeList;
             _cmd.RedoStack = _redoStack;
             _cmd.UndoStack = _undoStack;
             _cmd.Canvas = Canvas;
-            _canvasInvoker.InvokePointerMoved(_cmd);
+            await _canvasInvoker.InvokePointerMovedAsync(_cmd);
         }
 
         #endregion
@@ -236,72 +243,74 @@ namespace DPPaint
 
             foreach (PaintBase baseShape in _shapeList)
             {
-                if (baseShape is PaintShape shape)
-                {
-                    DrawShape(shape);
-                }
-                else if (baseShape is PaintGroup group)
-                {
-                    DrawGroup(group);
-                }
+
+                baseShape.DrawOnCanvas(Canvas);
+                //if (baseShape is PaintShape shape)
+                //{
+                //    DrawShape(shape);
+                //}
+                //else if (baseShape is PaintGroup group)
+                //{
+                //    DrawGroup(group);
+                //}
 
 
 
-                if (baseShape.Selected)
-                {
-                    DrawSelector(baseShape);
-                }
+                //if (baseShape.Selected)
+                //{
+                //    DrawSelector(baseShape);
+                //}
             }
         }
 
-        public void DrawShape(PaintShape shape)
-        {
-            Canvas.Children.Add(shape.GetDrawShape());
-        }
+        //public void DrawShape(PaintShape shape)
+        //{
+        //    Canvas.Children.Add(shape.GetDrawShape());
+        //}
 
-        public void DrawGroup(PaintGroup group)
-        {
-            foreach (PaintBase groupChild in group.Children)
-            {
-                if (groupChild is PaintShape shape)
-                {
-                    DrawShape(shape);
-                }
-                else if (groupChild is PaintGroup childGroup)
-                {
-                    DrawGroup(childGroup);
-                }
-            }
-        }
+        //public void DrawGroup(PaintGroup group)
+        //{
+        //    foreach (PaintBase groupChild in group.Children)
+        //    {
+        //        if (groupChild is PaintShape shape)
+        //        {
+        //            DrawShape(shape);
+        //        }
+        //        else if (groupChild is PaintGroup childGroup)
+        //        {
+        //            DrawGroup(childGroup);
+        //        }
+        //    }
+        //}
 
         public void DrawSelector(PaintBase baseShape)
         {
-            double width = baseShape.Width;
-            double height = baseShape.Height;
+            //double width = baseShape.Width;
+            //double height = baseShape.Height;
 
-            double x = baseShape.X;
-            double y = baseShape.Y;
+            //double x = baseShape.X;
+            //double y = baseShape.Y;
 
-            if (width < 0)
-            {
-                x = x + width;
-                width = width * -1.0;
-            }
+            //if (width < 0)
+            //{
+            //    x = x + width;
+            //    width = width * -1.0;
+            //}
 
-            if (height < 0)
-            {
-                y = y + height;
-                height = height * -1.0;
-            }
+            //if (height < 0)
+            //{
+            //    y = y + height;
+            //    height = height * -1.0;
+            //}
 
-            Shape selectorSquare = new Rectangle();
-            selectorSquare.Width = width + 4;
-            selectorSquare.Height = height + 4;
-            selectorSquare.SetValue(Canvas.LeftProperty, x - 2);
-            selectorSquare.SetValue(Canvas.TopProperty, y - 2);
-            selectorSquare.Stroke = new SolidColorBrush(Colors.Blue);
+            //Shape selectorSquare = new Rectangle();
+            //selectorSquare.Width = width + 4;
+            //selectorSquare.Height = height + 4;
+            //selectorSquare.SetValue(Canvas.LeftProperty, x - 2);
+            //selectorSquare.SetValue(Canvas.TopProperty, y - 2);
+            //selectorSquare.Stroke = new SolidColorBrush(Colors.Blue);
 
-            Canvas.Children.Add(selectorSquare);
+            //Canvas.Children.Add(selectorSquare);
         }
 
         #endregion
@@ -339,9 +348,9 @@ namespace DPPaint
             {
                 // Create name for list item
                 string name = "undefined";
-                if (!string.IsNullOrWhiteSpace(baseShape.Decoration))
+                if (baseShape is TextDecoration decoration)
                 {
-                    name = baseShape.Decoration;
+                    name = decoration.DecorationText;
                 }
                 else
                 {

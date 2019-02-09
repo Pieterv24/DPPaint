@@ -30,7 +30,7 @@ namespace DPPaint.Commands.Click
             _page = page;
         }
 
-        public void PointerPressedExecute()
+        public Task PointerPressedExecuteAsync()
         {
             _pointerStart = PointerEventArgs.GetCurrentPoint(Canvas).Position;
             selectorSquare = new Rectangle();
@@ -49,9 +49,11 @@ namespace DPPaint.Commands.Click
             selectorSquare.Fill = brush;
 
             Canvas.Children.Add(selectorSquare);
+
+            return Task.CompletedTask;
         }
 
-        public void PointerReleasedExecute()
+        public Task PointerReleasedExecuteAsync()
         {
             double x = (double)selectorSquare.GetValue(Canvas.LeftProperty);
             double y = (double)selectorSquare.GetValue(Canvas.TopProperty);
@@ -77,9 +79,11 @@ namespace DPPaint.Commands.Click
 
             _page.UpdateList();
             _page.Draw();
+
+            return Task.CompletedTask;
         }
 
-        public void PointerMovedExecute()
+        public Task PointerMovedExecuteAsync()
         {
             if (PointerEventArgs.Pointer.IsInContact && selectorSquare != null)
             {
@@ -105,6 +109,8 @@ namespace DPPaint.Commands.Click
                     selectorSquare.Height = difference.Y;
                 }
             }
+
+            return Task.CompletedTask;
         }
     }
 }

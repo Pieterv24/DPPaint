@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Shapes;
+using DPPaint.Decorators;
 using DPPaint.Shapes;
 using DPPaint.Strategy;
 
@@ -23,6 +24,10 @@ namespace DPPaint.Extensions
                 } else if (baseItem is PaintGroup group)
                 {
                     copy.Add(new PaintGroup(group));
+                }
+                else if (baseItem is TextDecoration decoration)
+                {
+                    copy.Add(decoration.DeepCopy());
                 }
             }
 

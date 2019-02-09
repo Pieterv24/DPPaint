@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DPPaint.Decorators;
 using DPPaint.Extensions;
 using DPPaint.Shapes;
 
@@ -29,7 +30,9 @@ namespace DPPaint.Commands.UserAction
 
         public Task ExecuteUserActionAsync()
         {
-            List<PaintBase> selected = ShapeList.Where(pb => pb.Selected && pb is PaintGroup).ToList();
+            List<PaintBase> selected = ShapeList.Where(pb => pb.Selected && 
+                                                             !(pb is PaintShape) &&
+                                                             (pb is PaintGroup || (pb as TextDecoration).InnerPaintBase is PaintGroup)).ToList();
 
             if (selected.Count > 0)
             {
@@ -38,9 +41,15 @@ namespace DPPaint.Commands.UserAction
 
                 foreach (PaintBase paintBase in selected)
                 {
-                    if (paintBase is PaintGroup group)
+                    PaintBase element = paintBase;
+                    if (element is TextDecoration decor)
                     {
-                        ShapeList.Remove(group);
+                        element = decor.GetDrawable();
+                    }
+
+                    if (element is PaintGroup group)
+                    {
+                        ShapeList.Remove(paintBase);
                         foreach (PaintBase groupChild in group.Children.ToList())
                         {
                             group.Remove(groupChild);

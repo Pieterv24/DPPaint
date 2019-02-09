@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DPPaint.Decorators;
 using DPPaint.Shapes;
 
 namespace DPPaint.Visitor
@@ -21,6 +22,11 @@ namespace DPPaint.Visitor
 
         public void Visit(PaintBase element)
         {
+            if (element is TextDecoration decor)
+            {
+                element = decor.GetDrawable();
+            }
+
             if (element is PaintShape shape)
             {
                 shape.X += _deltaX;

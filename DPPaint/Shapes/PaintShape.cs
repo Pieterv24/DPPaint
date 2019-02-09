@@ -5,6 +5,7 @@ using System.Numerics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Data.Json;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Shapes;
 using DPPaint.Strategy;
 using DPPaint.Visitor;
@@ -17,6 +18,12 @@ namespace DPPaint.Shapes
     /// </summary>
     public class PaintShape : PaintBase
     {
+        public override double Width { get; set; }
+        public override double Height { get; set; }
+        public override double X { get; set; }
+        public override double Y { get; set; }
+        public override bool Selected { get; set; }
+
         private readonly IShapeBase _shape;
 
         public PaintShape(IShapeBase shape)
@@ -27,11 +34,6 @@ namespace DPPaint.Shapes
         public PaintShape(PaintShape shape) : base(shape)
         {
             _shape = shape._shape;
-        }
-
-        public Shape GetDrawShape()
-        {
-            return _shape.GetDrawShape(this);
         }
 
         public override string ToString()
@@ -45,6 +47,13 @@ namespace DPPaint.Shapes
 
         public override void Remove(PaintBase c)
         {
+        }
+
+        public override void DrawOnCanvas(Canvas canvas)
+        {
+            if (Selected) base.DrawSelector(canvas);
+
+            canvas.Children.Add(_shape.GetDrawShape(this));
         }
     }
 }

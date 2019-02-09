@@ -18,16 +18,19 @@ namespace DPPaint.Commands.Click
         public Stack<List<PaintBase>> RedoStack { get; set; }
         public List<PaintBase> ShapeList { get; set; }
 
-        public void PointerPressedExecute()
+        public Task PointerPressedExecuteAsync()
         {
+            return Task.CompletedTask;
         }
 
-        public void PointerReleasedExecute()
+        public Task PointerReleasedExecuteAsync()
         {
+            return Task.CompletedTask;
         }
 
-        public void PointerMovedExecute()
+        public Task PointerMovedExecuteAsync()
         {
+            return Task.CompletedTask;
         }
     }
 }

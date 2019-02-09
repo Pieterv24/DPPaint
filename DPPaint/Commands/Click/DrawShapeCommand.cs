@@ -8,6 +8,7 @@ using Windows.UI.Input;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Shapes;
+using DPPaint.Decorators;
 using DPPaint.Extensions;
 using DPPaint.Shapes;
 using DPPaint.Strategy;
@@ -25,39 +26,42 @@ namespace DPPaint.Commands.Click
 
         private readonly ICanvasPage _page;
         private Point _pointerStart;
-        private PaintShape current;
+        private PaintBase current;
 
         public DrawShapeCommand(ICanvasPage page)
         {
             _page = page;
         }
 
-        public void PointerPressedExecute()
+        public Task PointerPressedExecuteAsync()
         {
             UndoStack.Push(ShapeList.DeepCopy());
             RedoStack.Clear();
 
             _pointerStart = PointerEventArgs.GetCurrentPoint(Canvas).Position;
 
-            PaintShape shape = new PaintShape(ShapeType)
-            {
-                X = _pointerStart.X,
-                Y = _pointerStart.Y
-            };
+            PaintBase shape = new PaintShape(ShapeType);
+
+            shape.X = _pointerStart.X;
+            shape.Y = _pointerStart.Y;
 
             ShapeList.Add(shape);
             current = shape;
 
             _page.Draw();
             _page.UpdateList();
+
+            return Task.CompletedTask;
         }
 
-        public void PointerReleasedExecute()
+        public Task PointerReleasedExecuteAsync()
         {
             current = null;
+
+            return Task.CompletedTask;
         }
 
-        public void PointerMovedExecute()
+        public Task PointerMovedExecuteAsync()
         {
             if (PointerEventArgs.Pointer.IsInContact && current != null)
             {
@@ -84,6 +88,8 @@ namespace DPPaint.Commands.Click
 
                 _page.Draw();
             }
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -15,19 +15,19 @@ namespace DPPaint.Commands.Click
         {
         }
 
-        public void InvokePointerPressed(ICanvasCommand cmd)
+        public async Task InvokePointerPressedAsync(ICanvasCommand cmd)
         {
-            cmd.PointerPressedExecute();
+            await cmd.PointerPressedExecuteAsync();
         }
 
-        public void InvokePointerReleased(ICanvasCommand cmd)
+        public async Task InvokePointerReleasedAsync(ICanvasCommand cmd)
         {
-            cmd.PointerReleasedExecute();
+            await cmd.PointerReleasedExecuteAsync();
         }
 
-        public void InvokePointerMoved(ICanvasCommand cmd)
+        public async Task InvokePointerMovedAsync(ICanvasCommand cmd)
         {
-            cmd.PointerMovedExecute();
+            await cmd.PointerMovedExecuteAsync();
         }
     }
 }

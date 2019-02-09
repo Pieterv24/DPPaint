@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using DPPaint.Decorators;
 using DPPaint.Extensions;
 using DPPaint.Shapes;
 using DPPaint.Visitor;
@@ -44,6 +45,14 @@ namespace DPPaint.Commands.UserAction
                 foreach (PaintBase paintBase in selected)
                 {
                     ShapeList.Remove(paintBase);
+                    paintBase.Selected = false;
+
+                    //if (paintBase is TextDecoration decoration)
+                    //{
+                    //    newGroup.Add(decoration.GetDrawable());
+                    //    continue;
+                    //}
+
                     newGroup.Add(paintBase);
                 }
 

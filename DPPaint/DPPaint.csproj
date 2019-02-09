@@ -95,6 +95,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Commands\Click\ChangeDecoratorCommand.cs" />
     <Compile Include="Commands\Click\ClickInvoker.cs" />
     <Compile Include="Commands\Click\ClickSelectCommand.cs" />
     <Compile Include="Commands\Click\DefaultCommand.cs" />
@@ -112,13 +113,21 @@
     <Compile Include="Commands\UserAction\SaveFileCommand.cs" />
     <Compile Include="Commands\UserAction\UndoCommand.cs" />
     <Compile Include="Commands\UserAction\UserActionInvoker.cs" />
+    <Compile Include="Decorators\RightDecoration.cs" />
+    <Compile Include="Decorators\LeftDecoration.cs" />
+    <Compile Include="Decorators\TextDecoration.cs" />
+    <Compile Include="Decorators\BottomDecoration.cs" />
+    <Compile Include="Decorators\TopDecoration.cs" />
+    <Compile Include="Decorators\DecoratorAnchor.cs" />
+    <Compile Include="Dialogs\DecoratorDialog.xaml.cs">
+      <DependentUpon>DecoratorDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Extensions\HelperExtensions.cs" />
     <Compile Include="ICanvasPage.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Shapes\DecoratorAnchor.cs" />
     <Compile Include="Shapes\PaintBase.cs" />
     <Compile Include="Shapes\PaintBaseProperties.cs" />
     <Compile Include="Shapes\PaintGroup.cs" />
@@ -154,6 +163,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Dialogs\DecoratorDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

@@ -79,6 +79,14 @@
                 </AppBarToggleButton.Icon>
             </AppBarToggleButton>
             <AppBarToggleButton 
+                x:Name="EditDecorator" 
+                Label="Edit Decorator"
+                Click="BrushToggle_OnClick">
+                <AppBarToggleButton.Icon>
+                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE70F;"></FontIcon>
+                </AppBarToggleButton.Icon>
+            </AppBarToggleButton>
+            <AppBarToggleButton 
                 x:Name="MoveToggle" 
                 Label="Move"
                 Click="BrushToggle_OnClick">

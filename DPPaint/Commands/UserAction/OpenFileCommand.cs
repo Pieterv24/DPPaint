@@ -1,15 +1,12 @@
-﻿using System;
+﻿using DPPaint.Shapes;
+using DPPaint.Strategy;
+using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Numerics;
-using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 using Windows.Storage.Pickers;
-using DPPaint.Shapes;
-using DPPaint.Strategy;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+using DPPaint.Decorators;
 
 namespace DPPaint.Commands.UserAction
 {
@@ -82,7 +79,7 @@ namespace DPPaint.Commands.UserAction
                                     PaintShape shape = GetPaintShape(jObject, deserializedProperties);
                                     if (shape != null)
                                     {
-                                        newShapeList.Add(shape);
+                                        newShapeList.Add(AddDecorators(jObject, shape));
                                     }
                                 }
                                 else if (type == PaintType.Group)
@@ -90,7 +87,7 @@ namespace DPPaint.Commands.UserAction
                                     PaintGroup group = GetPaintGroup(jObject, deserializedProperties);
                                     if (group != null)
                                     {
-                                        newShapeList.Add(group);
+                                        newShapeList.Add(AddDecorators(jObject, group));
                                     }
                                 }
                             }
@@ -104,27 +101,22 @@ namespace DPPaint.Commands.UserAction
 
         private PaintBaseProperties GetBaseProperties(JObject jObject)
         {
-            bool overalCompletion = true;
+            bool overallCompletion = true;
 
-            DecoratorAnchor anchor = DecoratorAnchor.Top;
             double width = 0;
             double height = 0;
             double x = 0;
             double y = 0;
 
-            overalCompletion = overalCompletion && Enum.TryParse(jObject.GetValue("anchor").ToString(), out anchor);
-            string decoration = jObject.GetValue("decoration").ToString();
-            overalCompletion = overalCompletion && double.TryParse(jObject.GetValue("width").ToString(), out width);
-            overalCompletion = overalCompletion && double.TryParse(jObject.GetValue("height").ToString(), out height);
-            overalCompletion = overalCompletion && double.TryParse(jObject.GetValue("x").ToString(), out x);
-            overalCompletion = overalCompletion && double.TryParse(jObject.GetValue("y").ToString(), out y);
+            overallCompletion = overallCompletion && double.TryParse(jObject.GetValue("width").ToString(), out width);
+            overallCompletion = overallCompletion && double.TryParse(jObject.GetValue("height").ToString(), out height);
+            overallCompletion = overallCompletion && double.TryParse(jObject.GetValue("x").ToString(), out x);
+            overallCompletion = overallCompletion && double.TryParse(jObject.GetValue("y").ToString(), out y);
 
-            if (overalCompletion)
+            if (overallCompletion)
             {
                 return new PaintBaseProperties
                 {
-                    Anchor = anchor,
-                    Decoration = decoration,
                     Width = width,
                     Height = height,
                     X = x,
@@ -145,8 +137,6 @@ namespace DPPaint.Commands.UserAction
 
                 return new PaintShape(shape)
                 {
-                    Anchor = baseProps.Anchor,
-                    Decoration = baseProps.Decoration,
                     Height = baseProps.Height,
                     Width = baseProps.Width,
                     X = baseProps.X,
@@ -161,8 +151,6 @@ namespace DPPaint.Commands.UserAction
         {
             PaintGroup group = new PaintGroup
             {
-                Anchor = baseProps.Anchor,
-                Decoration = baseProps.Decoration,
                 Height = baseProps.Height,
                 Width = baseProps.Width,
                 X = baseProps.X,
@@ -185,7 +173,7 @@ namespace DPPaint.Commands.UserAction
                                 PaintShape shape = GetPaintShape(jChild, deserBase);
                                 if (shape != null)
                                 {
-                                    group.Add(shape);
+                                    group.Add(AddDecorators(jChild, shape));
                                 }
                             }
                             else if (type == PaintType.Group)
@@ -193,7 +181,7 @@ namespace DPPaint.Commands.UserAction
                                 PaintGroup innerGroup = GetPaintGroup(jChild, deserBase);
                                 if (innerGroup != null)
                                 {
-                                    group.Add(innerGroup);
+                                    group.Add(AddDecorators(jChild, innerGroup));
                                 }
                             }
                         }
@@ -202,6 +190,37 @@ namespace DPPaint.Commands.UserAction
             }
 
             return group;
+        }
+
+        private PaintBase AddDecorators(JObject jObject, PaintBase paintBase)
+        {
+            if (jObject.GetValue("decorators") is JArray decorators)
+            {
+                foreach (JToken decorator in decorators)
+                {
+                    if (decorator is JObject jDecorator &&
+                        (jDecorator.ContainsKey("position") && jDecorator.ContainsKey("decoration")))
+                    {
+                        switch (jDecorator.GetValue("position").ToString())
+                        {
+                            case "Top":
+                                paintBase = new TopDecoration(paintBase, jDecorator.GetValue("decoration").ToString());
+                                break;
+                            case "Bottom":
+                                paintBase = new BottomDecoration(paintBase, jDecorator.GetValue("decoration").ToString());
+                                break;
+                            case "Left":
+                                paintBase = new LeftDecoration(paintBase, jDecorator.GetValue("decoration").ToString());
+                                break;
+                            case "Right":
+                                paintBase = new RightDecoration(paintBase, jDecorator.GetValue("decoration").ToString());
+                                break;
+                        }
+                    }
+                }
+            }
+
+            return paintBase;
         }
     }
 }

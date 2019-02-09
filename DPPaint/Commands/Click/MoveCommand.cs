@@ -31,21 +31,25 @@ namespace DPPaint.Commands.Click
             _page = page;
         }
 
-        public void PointerPressedExecute()
+        public Task PointerPressedExecuteAsync()
         {
             UndoStack.Push(ShapeList.DeepCopy());
             RedoStack.Clear();
 
             _prevPointer = PointerEventArgs.GetCurrentPoint(Canvas).Position;
             _selected = ShapeList.Where(bs => bs.Selected).ToList();
+
+            return Task.CompletedTask;
         }
 
-        public void PointerReleasedExecute()
+        public Task PointerReleasedExecuteAsync()
         {
             _selected = null;
+
+            return Task.CompletedTask;
         }
 
-        public void PointerMovedExecute()
+        public Task PointerMovedExecuteAsync()
         {
             if (PointerEventArgs.Pointer.IsInContact && _selected.Count > 0)
             {
@@ -60,6 +64,8 @@ namespace DPPaint.Commands.Click
             }
 
             _page.Draw();
+
+            return Task.CompletedTask;
         }
     }
 }

@@ -8,8 +8,6 @@ namespace DPPaint.Shapes
         public double Height { get; set; }
         public double X { get; set; }
         public double Y { get; set; }
-        public string Decoration { get; set; }
         public bool Selected { get; set; }
-        public DecoratorAnchor Anchor { get; set; }
     }
 }

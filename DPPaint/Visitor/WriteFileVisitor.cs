@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using DPPaint.Decorators;
 using DPPaint.Shapes;
 using Newtonsoft.Json.Linq;
 
@@ -19,23 +20,29 @@ namespace DPPaint.Visitor
 
         public void Visit(PaintBase element)
         {
+            JObject masterJObject = new JObject();
+            JArray decorators = null;
+            if (element is TextDecoration decoration)
+            {
+                decorators = getDecoratorArray(decoration);
+                element = decoration.GetDrawable();
+            }
+
             if (element is PaintShape shape)
             {
-                JObject jObject = new JObject
+                masterJObject = new JObject
                 {
                     {"type", (int)PaintType.Shape},
                     { "shapeType", shape.ToString()}
                 };
-                jObject.Merge(getBaseJObject(shape));
-
-                _jParent.Add(jObject);
+                masterJObject.Merge(getBaseJObject(shape));
             } else if (element is PaintGroup group)
             {
-                JObject jObject = new JObject
+                masterJObject = new JObject
                 {
                     { "type", (int)PaintType.Group }
                 };
-                jObject.Merge(getBaseJObject(group));
+                masterJObject.Merge(getBaseJObject(group));
 
                 JArray children = new JArray();
 
@@ -44,10 +51,15 @@ namespace DPPaint.Visitor
                     paintBase.Accept(new WriteFileVisitor(children));
                 }
 
-                jObject.Add("children", children);
-
-                _jParent.Add(jObject);
+                masterJObject.Add("children", children);
             }
+
+            if (decorators != null)
+            {
+                masterJObject.Add("decorators", decorators);
+            }
+
+            _jParent.Add(masterJObject);
         }
 
         private JObject getBaseJObject(PaintBase paintBase)
@@ -57,10 +69,30 @@ namespace DPPaint.Visitor
                 { "width", paintBase.Width },
                 { "height", paintBase.Height },
                 { "x", paintBase.X },
-                { "y", paintBase.Y },
-                { "decoration", paintBase.Decoration },
-                { "anchor", (int)paintBase.Anchor },
+                { "y", paintBase.Y }
             };
+        }
+
+        private JArray getDecoratorArray(TextDecoration decoration)
+        {
+            JArray decoratorArray = new JArray();
+            return getDecoratorArray(decoration, decoratorArray);
+        }
+
+        private JArray getDecoratorArray(TextDecoration decoration, JArray array)
+        {
+            array.Add(new JObject
+            {
+                {"position", decoration.GetDecoratorPosition().ToString() },
+                {"decoration", decoration.DecorationText }
+            });
+
+            if (decoration.InnerPaintBase is TextDecoration decor)
+            {
+                return getDecoratorArray(decor, array);
+            }
+
+            return array;
         }
     }
 }

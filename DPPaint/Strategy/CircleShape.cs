@@ -54,11 +54,6 @@ namespace DPPaint.Strategy
             return drawShape;
         }
 
-        public IShapeBase GetShapeBase()
-        {
-            return Instance;
-        }
-
         public override string ToString()
         {
             return "Circle";

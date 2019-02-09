@@ -13,12 +13,20 @@ using DPPaint.Visitor;
 
 namespace DPPaint.Commands.Click
 {
+    /// <summary>
+    /// This command handles pointer events to move items on the canvas
+    /// </summary>
     public class MoveCommand : ICanvasCommand
     {
+        /// <inheritdoc />
         public PointerRoutedEventArgs PointerEventArgs { get; set; }
+        /// <inheritdoc />
         public Canvas Canvas { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> UndoStack { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> RedoStack { get; set; }
+        /// <inheritdoc />
         public List<PaintBase> ShapeList { get; set; }
 
         private readonly ICanvasPage _page;
@@ -31,6 +39,7 @@ namespace DPPaint.Commands.Click
             _page = page;
         }
 
+        /// <inheritdoc />
         public Task PointerPressedExecuteAsync()
         {
             UndoStack.Push(ShapeList.DeepCopy());
@@ -42,6 +51,7 @@ namespace DPPaint.Commands.Click
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public Task PointerReleasedExecuteAsync()
         {
             _selected = null;
@@ -49,6 +59,7 @@ namespace DPPaint.Commands.Click
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public Task PointerMovedExecuteAsync()
         {
             if (PointerEventArgs.Pointer.IsInContact && _selected.Count > 0)

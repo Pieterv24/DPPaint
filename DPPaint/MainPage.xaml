@@ -52,11 +52,33 @@
             Style="{StaticResource TopPanel}"
             FlowDirection="RightToLeft"
         >
-            <AppBarButton Label="Open"  Icon="OpenFile" Click="OpenButtonClick"/>
-            <AppBarButton Label="Save" Icon="Save" Click="SaveButtonClick"/>
-            <AppBarButton Label="Redo" Icon="Redo" Click="RedoButtonClick"/>
-            <AppBarButton Label="Undo" Icon="Undo" Click="UndoButtonClick"/>
-            <AppBarButton Label="Clear" Icon="Clear" Click="ClearButton_OnClick"/>
+            <AppBarButton 
+                x:Name="OpenButton"
+                Label="Open"
+                Icon="OpenFile"
+                Click="UserActionClick"
+            />
+            <AppBarButton
+                x:Name="SaveButton"
+                Label="Save"
+                Icon="Save"
+                Click="UserActionClick"
+            />
+            <AppBarButton
+                x:Name="RedoButton"
+                Label="Redo"
+                Icon="Redo"
+                Click="UserActionClick"/>
+            <AppBarButton
+                x:Name="UndoButton"
+                Label="Undo"
+                Icon="Undo" 
+                Click="UserActionClick"
+            />
+            <AppBarButton
+                Label="Clear"
+                Icon="Clear"
+                Click="ClearButton_OnClick"/>
         </StackPanel>
         <StackPanel
             Style="{StaticResource BottomPanel}"
@@ -119,17 +141,17 @@
                 </AppBarToggleButton.Icon>
             </AppBarToggleButton>
             <AppBarSeparator/>
-            <AppBarButton Label="Group" Click="GroupButtonClick">
+            <AppBarButton x:Name="GroupButton" Label="Group" Click="UserActionClick">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF168;"></FontIcon>
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton Label="Ungroup" Click="UnGroupButtonClick">
+            <AppBarButton x:Name="UnGroupButton" Label="Ungroup" Click="UserActionClick">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xF165;"></FontIcon>
                 </AppBarButton.Icon>
             </AppBarButton>
-            <AppBarButton Label="Delete" Click="DeleteButtonClick">
+            <AppBarButton x:Name="DeleteButton" Label="Delete" Click="UserActionClick">
                 <AppBarButton.Icon>
                     <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE74D;"></FontIcon>
                 </AppBarButton.Icon>

@@ -15,11 +15,17 @@ namespace DPPaint.Commands.Click
 {
     public class ScaleCommand : ICanvasCommand
     {
+        /// <inheritdoc />
         public PointerRoutedEventArgs PointerEventArgs { get; set; }
+        /// <inheritdoc />
         public Canvas Canvas { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> UndoStack { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> RedoStack { get; set; }
+        /// <inheritdoc />
         public List<PaintBase> ShapeList { get; set; }
+        /// <inheritdoc />
 
         private readonly ICanvasPage _page;
 
@@ -31,6 +37,7 @@ namespace DPPaint.Commands.Click
             _page = page;
         }
 
+        /// <inheritdoc />
         public Task PointerPressedExecuteAsync()
         {
             UndoStack.Push(ShapeList.DeepCopy());
@@ -42,6 +49,7 @@ namespace DPPaint.Commands.Click
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public Task PointerReleasedExecuteAsync()
         {
             _selected = null;
@@ -49,16 +57,19 @@ namespace DPPaint.Commands.Click
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public Task PointerMovedExecuteAsync()
         {
             if (PointerEventArgs.Pointer.IsInContact && _selected.Count > 0)
             {
                 Point currentPoint = PointerEventArgs.GetCurrentPoint(Canvas).Position;
+                // Calculate mouse movement deltas
                 Point difference = new Point(currentPoint.X - _prevPointer.X, currentPoint.Y - _prevPointer.Y);
                 _prevPointer = currentPoint;
 
                 foreach (PaintBase paintBase in _selected)
                 {
+                    // Use visitor pattern to apply scale to the elements
                     paintBase.Accept(new ScaleVisitor(difference.X, difference.Y));
                 }
 

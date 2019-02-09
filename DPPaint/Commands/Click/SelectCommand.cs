@@ -13,12 +13,20 @@ using DPPaint.Shapes;
 
 namespace DPPaint.Commands.Click
 {
+    /// <summary>
+    /// This command handles pointer events to draw an selection square to select multiple items
+    /// </summary>
     public class SelectCommand : ICanvasCommand
     {
+        /// <inheritdoc />
         public PointerRoutedEventArgs PointerEventArgs { get; set; }
+        /// <inheritdoc />
         public Canvas Canvas { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> UndoStack { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> RedoStack { get; set; }
+        /// <inheritdoc />
         public List<PaintBase> ShapeList { get; set; }
 
         private readonly ICanvasPage _page;
@@ -30,9 +38,12 @@ namespace DPPaint.Commands.Click
             _page = page;
         }
 
+        /// <inheritdoc />
         public Task PointerPressedExecuteAsync()
         {
             _pointerStart = PointerEventArgs.GetCurrentPoint(Canvas).Position;
+
+            // Create selector square
             selectorSquare = new Rectangle();
 
             selectorSquare.Width = 1;
@@ -40,6 +51,7 @@ namespace DPPaint.Commands.Click
             selectorSquare.SetValue(Canvas.LeftProperty, _pointerStart.X);
             selectorSquare.SetValue(Canvas.TopProperty, _pointerStart.Y);
 
+            // Give selector square blue acryl color
             Brush brush = new AcrylicBrush()
             {
                 TintColor = Colors.Blue,
@@ -53,6 +65,7 @@ namespace DPPaint.Commands.Click
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public Task PointerReleasedExecuteAsync()
         {
             double x = (double)selectorSquare.GetValue(Canvas.LeftProperty);
@@ -60,6 +73,7 @@ namespace DPPaint.Commands.Click
             double xMax = x + selectorSquare.Width;
             double yMax = y + selectorSquare.Height;
 
+            // Find what elements are in the selector square
             foreach (PaintBase paintBase in ShapeList)
             {
                 double eX = paintBase.X;
@@ -67,6 +81,7 @@ namespace DPPaint.Commands.Click
                 double eXMax = eX + paintBase.Width;
                 double eYMax = eY + paintBase.Height;
 
+                // Check if paintBase is within the selector square
                 if (((eX > x && eX < xMax) && (eY > y && eY < yMax)) &&
                     ((eXMax > x && eXMax < xMax) && (eYMax > y && eYMax < yMax)))
                 {
@@ -74,6 +89,7 @@ namespace DPPaint.Commands.Click
                 }
             }
 
+            // Delete selector square
             Canvas.Children.Remove(selectorSquare);
             selectorSquare = null;
 
@@ -83,10 +99,12 @@ namespace DPPaint.Commands.Click
             return Task.CompletedTask;
         }
 
+        /// <inheritdoc />
         public Task PointerMovedExecuteAsync()
         {
             if (PointerEventArgs.Pointer.IsInContact && selectorSquare != null)
             {
+                // Update the size of the selector square
                 Point currentPoint = PointerEventArgs.GetCurrentPoint(Canvas).Position;
                 Point difference = new Point(currentPoint.X - _pointerStart.X, currentPoint.Y - _pointerStart.Y);
                 if (difference.X < 0)

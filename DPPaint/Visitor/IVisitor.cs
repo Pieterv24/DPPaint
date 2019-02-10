@@ -7,6 +7,9 @@ using DPPaint.Shapes;
 
 namespace DPPaint.Visitor
 {
+    /// <summary>
+    /// Visitor
+    /// </summary>
     public interface IVisitor
     {
         void Visit(PaintBase element);

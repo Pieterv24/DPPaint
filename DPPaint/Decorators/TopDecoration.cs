@@ -12,6 +12,9 @@ using DPPaint.Shapes;
 
 namespace DPPaint.Decorators
 {
+    /// <summary>
+    /// Implementation of TextDecoration with logic to draw the decoration on the top
+    /// </summary>
     public class TopDecoration : TextDecoration
     {
         public TopDecoration(PaintBase paintBase) : base(paintBase)
@@ -23,8 +26,10 @@ namespace DPPaint.Decorators
             DecorationText = decorationText;
         }
 
+        /// <inheritdoc />
         public override TextDecoration GetClickedDecoration(double clickX, double clickY)
         {
+            // Create instance of TextBlock to use for measurement
             TextBlock tb = new TextBlock
             {
                 Text = DecorationText,
@@ -33,18 +38,22 @@ namespace DPPaint.Decorators
                 Foreground = new SolidColorBrush(Colors.Black)
             };
 
+            // Calculate actual size of the TextBlock
             tb.Measure(new Size(Double.PositiveInfinity, Double.PositiveInfinity));
 
+            // Calculate Top left and bottom right coordinates of TextBlock on canvas
             double newX = (X + (Width / 2)) - (tb.ActualWidth / 2);
             double newY = Y - tb.ActualHeight;
 
             double maxX = newX + tb.ActualWidth;
             double maxY = newY + tb.ActualHeight;
 
+            // Check if that TextBlock was clicked
             if ((clickX > newX && clickX < maxX) && (clickY > newY && clickY < maxY))
             {
                 return this;
             }
+            // If not, and the decorated object is also a decoration, check that recursively
             else if (_paintBase is TextDecoration decoration)
             {
                 TextDecoration decor = decoration.GetClickedDecoration(clickX, clickY);
@@ -57,6 +66,10 @@ namespace DPPaint.Decorators
             return null;
         }
 
+        /// <summary>
+        /// Override DrawOnCanvas to add the decoration itself to the canvas
+        /// </summary>
+        /// <param name="canvas">Canvas to add decoration to</param>
         public override void DrawOnCanvas(Canvas canvas)
         {
             TextBlock tb = new TextBlock
@@ -79,6 +92,7 @@ namespace DPPaint.Decorators
             base.DrawOnCanvas(canvas);
         }
 
+        /// <inheritdoc />
         public override DecoratorAnchor GetDecoratorPosition()
         {
             return DecoratorAnchor.Top;

@@ -14,31 +14,51 @@ using Newtonsoft.Json.Linq;
 
 namespace DPPaint.Commands.UserAction
 {
+    /// <summary>
+    /// This class handles the saving of the current state into a file
+    /// For this, JSON formatting is used
+    /// </summary>
     public class SaveFileCommand : IUserActionCommand
     {
+        #region Properties
+
+        /// <inheritdoc />
         public List<PaintBase> ShapeList { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> UndoStack { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> RedoStack { get; set; }
+
+        #endregion
 
         public SaveFileCommand()
         {
         }
 
+        #region Command pattern entry
+
+        /// <inheritdoc />
         public void ExecuteUserAction()
         {
             ExecuteUserActionAsync().GetAwaiter().GetResult();
         }
 
+        /// <inheritdoc />
         public async Task ExecuteUserActionAsync()
         {
+            // Create a json array object
             JArray jsonArray = new JArray();
+            
+            // Use the visitor pattern to create a json array object
             ShapeList.ForEach(paintBase =>
             {
                 paintBase.Accept(new WriteFileVisitor(jsonArray));
             });
 
+            // Convert jsonarray object to string
             string shapeListJson = jsonArray.ToString();
 
+            // Get save location from user
             FileSavePicker savePicker = new FileSavePicker();
             savePicker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             savePicker.FileTypeChoices.Add("JSON File", new List<string>(){".json"});
@@ -47,9 +67,11 @@ namespace DPPaint.Commands.UserAction
 
             if (file != null)
             {
+                // Try to write file to the disk
                 CachedFileManager.DeferUpdates(file);
                 await FileIO.WriteTextAsync(file, shapeListJson);
 
+                // Give dialog dependent on success
                 FileUpdateStatus status = await CachedFileManager.CompleteUpdatesAsync(file);
                 if (status == FileUpdateStatus.Complete)
                 {
@@ -86,5 +108,7 @@ namespace DPPaint.Commands.UserAction
                 await dialog.ShowAsync();
             }
         }
+
+        #endregion
     }
 }

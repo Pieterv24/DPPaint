@@ -8,10 +8,16 @@ using DPPaint.Shapes;
 
 namespace DPPaint.Commands.UserAction
 {
+    /// <summary>
+    /// This class handles undo user entries
+    /// </summary>
     public class UndoCommand : IUserActionCommand
     {
+        /// <inheritdoc />
         public List<PaintBase> ShapeList { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> UndoStack { get; set; }
+        /// <inheritdoc />
         public Stack<List<PaintBase>> RedoStack { get; set; }
 
         private readonly ICanvasPage _page;
@@ -21,11 +27,13 @@ namespace DPPaint.Commands.UserAction
             _page = page;
         }
 
+        /// <inheritdoc />
         public void ExecuteUserAction()
         {
             ExecuteUserActionAsync().GetAwaiter().GetResult();
         }
 
+        /// <inheritdoc />
         public Task ExecuteUserActionAsync()
         {
             if (UndoStack.Count > 0)

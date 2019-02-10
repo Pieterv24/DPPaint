@@ -56,6 +56,10 @@ namespace DPPaint.Decorators
         #endregion
 
         public string DecorationText { get; set; }
+
+        /// <summary>
+        /// Read only access to the decorated instance
+        /// </summary>
         public PaintBase InnerPaintBase => _paintBase;
 
         /// <summary>
@@ -71,10 +75,9 @@ namespace DPPaint.Decorators
         {
             _paintBase = paintBase;
             DecorationText = decorationText;
-        } 
+        }
 
-        public abstract TextDecoration GetClickedDecoration(double clickX, double clickY);
-        public abstract DecoratorAnchor GetDecoratorPosition();
+        #region Inherited abstract impelmentations
 
         /// <summary>
         /// Propagate Add Method to the internal PaintBase
@@ -103,6 +106,27 @@ namespace DPPaint.Decorators
             _paintBase.DrawOnCanvas(canvas);
         }
 
+        #endregion
+
+        #region Methods to implement by decorators
+        /// <summary>
+        /// Check if click is made on the location of the decoration.
+        /// Recurcively searches if the TextDecoration of the TextDecoration of a child was clicked
+        /// </summary>
+        /// <param name="clickX">X coordinate of the click</param>
+        /// <param name="clickY">Y coordinate of the click</param>
+        /// <returns>Return TextDecoration that was clicked, null if none found</returns>
+        public abstract TextDecoration GetClickedDecoration(double clickX, double clickY);
+        public abstract DecoratorAnchor GetDecoratorPosition();
+
+        #endregion
+
+        #region Common decorator methods
+
+        /// <summary>
+        /// Get undecorated PaintBase
+        /// </summary>
+        /// <returns>Undecorated PaintBase</returns>
         public PaintBase GetDrawable()
         {
             if (_paintBase is TextDecoration decoration)
@@ -113,25 +137,44 @@ namespace DPPaint.Decorators
             return _paintBase;
         }
 
+        /// <summary>
+        /// Create deep copy of decorated element (recursively when needed)
+        /// </summary>
+        /// <returns>Deep copy of instance</returns>
         public TextDecoration DeepCopy()
         {
+            // Get the type of instance
             Type thisType = this.GetType();
 
+            // If decorated instance is also decorated, recursively create a deep copy of that aswell
             if (_paintBase is TextDecoration decoration)
             {
+                // Create new object of the same type of the current instance
+                // Would be the same as new T(decoratable, decorationText); where T is an implementation of TextDecoration
                 TextDecoration td = (TextDecoration) Activator.CreateInstance(thisType, decoration.DeepCopy(), DecorationText);
                 return td;
             }
             else
             {
+                // Create new instance of decorated object
                 Type paintBaseType = _paintBase.GetType();
                 PaintBase paintBase = (PaintBase) Activator.CreateInstance(paintBaseType, _paintBase);
 
+                // Create new object of the same type of the current instance
+                // Would be the same as new T(decoratable, decorationText); where T is an implementation of TextDecoration
                 TextDecoration td = (TextDecoration) Activator.CreateInstance(thisType, paintBase, DecorationText);
                 return td;
             }
         }
 
+        /// <summary>
+        /// Removes decorator from a decorated object.
+        /// If the decorator is not the current instantiated object.
+        /// Find decorator to remove recursively.
+        /// Does nothing if specified decorator is not found
+        /// </summary>
+        /// <param name="decoration">Decorator to remove</param>
+        /// <returns>Object in which specified decorator is removed(if found)</returns>
         public PaintBase RemoveDecorator(TextDecoration decoration)
         {
             if (decoration == this)
@@ -151,6 +194,13 @@ namespace DPPaint.Decorators
             return this;
         }
 
+        /// <summary>
+        /// Change the position of a specified decoration
+        /// If not this object, check recursively for inner decorator that matches
+        /// </summary>
+        /// <param name="original">Decorator that should be changed</param>
+        /// <param name="newPosition">New position of decorator</param>
+        /// <returns>Object where the specified decorator is changed to the new position</returns>
         public TextDecoration MovePosition(TextDecoration original, DecoratorAnchor newPosition)
         {
             if (original == this)
@@ -170,6 +220,13 @@ namespace DPPaint.Decorators
             return this;
         }
 
+        /// <summary>
+        /// Create new instance of object that implements TextDecoration based on the decorator anchor
+        /// </summary>
+        /// <param name="position">Position of TextDecoration to create</param>
+        /// <param name="innerPaintBase">Item to decorate</param>
+        /// <param name="decorationText">Decoration text</param>
+        /// <returns>New instance of TextDecoration in correct position</returns>
         private TextDecoration CreateNewDecoration(DecoratorAnchor position, PaintBase innerPaintBase, string decorationText)
         {
             TextDecoration newDecoration = null;
@@ -192,5 +249,7 @@ namespace DPPaint.Decorators
 
             return newDecoration;
         }
+
+        #endregion
     }
 }

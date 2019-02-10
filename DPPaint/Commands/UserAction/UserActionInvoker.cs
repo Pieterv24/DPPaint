@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DPPaint.Commands.UserAction
 {
+    /// <summary>
+    /// Invoker for user actions
+    /// </summary>
     public class UserActionInvoker
     {
         public void InvokeUserAction(IUserActionCommand cmd)

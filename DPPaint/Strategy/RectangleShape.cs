@@ -11,6 +11,9 @@ using DPPaint.Shapes;
 
 namespace DPPaint.Strategy
 {
+    /// <summary>
+    /// Circle strategy
+    /// </summary>
     public class RectangleShape : IShapeBase
     {
         private static RectangleShape _instance = null;
@@ -37,6 +40,7 @@ namespace DPPaint.Strategy
             }
         }
 
+        /// <inheritdoc />
         public Shape GetDrawShape(PaintBase paintBase)
         {
             Shape drawShape = new Rectangle();
@@ -54,11 +58,7 @@ namespace DPPaint.Strategy
             return drawShape;
         }
 
-        public IShapeBase GetShapeBase()
-        {
-            return Instance;
-        }
-
+        /// <inheritdoc cref="IShapeBase"/>
         public override string ToString()
         {
             return "Rectangle";

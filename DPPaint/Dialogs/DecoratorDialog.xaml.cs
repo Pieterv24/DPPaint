@@ -6,6 +6,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace DPPaint.Dialogs
 {
+    /// <summary>
+    /// Dialog for editing Dialog
+    /// </summary>
     public sealed partial class DecoratorDialog : ContentDialog
     {
         public string Decoration

@@ -12,6 +12,11 @@ namespace DPPaint.Extensions
 {
     public static class HelperExtensions
     {
+        /// <summary>
+        /// Create a deep copy of the shape list
+        /// </summary>
+        /// <param name="list">List to create a deep copy of</param>
+        /// <returns>Deep copy of list</returns>
         public static List<PaintBase> DeepCopy(this List<PaintBase> list)
         {
             List<PaintBase> copy = new List<PaintBase>();

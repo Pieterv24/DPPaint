@@ -8,6 +8,9 @@ using Newtonsoft.Json.Linq;
 
 namespace DPPaint.Shapes
 {
+    /// <summary>
+    /// Basic drawable object
+    /// </summary>
     public abstract class PaintBase : IVisitable
     {
         public abstract double Width { get; set; }
@@ -21,6 +24,10 @@ namespace DPPaint.Shapes
 
         }
 
+        /// <summary>
+        /// Constructor creates deep copy of PaintBase
+        /// </summary>
+        /// <param name="paintBase">PaintBase to create deep copy of</param>
         protected PaintBase(PaintBase paintBase)
         {
             Width = paintBase.Width;
@@ -38,10 +45,27 @@ namespace DPPaint.Shapes
             Selected = props.Selected;
         }
 
+        /// <summary>
+        /// Add item to composite pattern
+        /// </summary>
+        /// <param name="c">Item to add</param>
         public abstract void Add(PaintBase c);
+        /// <summary>
+        /// Remove item from composite pattern
+        /// </summary>
+        /// <param name="c">Item to remove</param>
         public abstract void Remove(PaintBase c);
+
+        /// <summary>
+        /// Draw item onto canvas
+        /// </summary>
+        /// <param name="canvas">Canvas to draw on</param>
         public abstract void DrawOnCanvas(Canvas canvas);
 
+        /// <summary>
+        /// Draw selector square around PaintBase
+        /// </summary>
+        /// <param name="canvas">Canvas to draw selector square on</param>
         public virtual void DrawSelector(Canvas canvas)
         {
             double width = Width;
@@ -72,6 +96,10 @@ namespace DPPaint.Shapes
             canvas.Children.Add(selectorSquare);
         }
 
+        /// <summary>
+        /// Entry point for visitor pattern
+        /// </summary>
+        /// <param name="visitor">Visitor object</param>
         public void Accept(IVisitor visitor)
         {
             visitor.Visit(this);

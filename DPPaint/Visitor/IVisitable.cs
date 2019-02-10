@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace DPPaint.Visitor
 {
+    /// <summary>
+    /// Interface to implement for visitable object
+    /// </summary>
     public interface IVisitable
     {
         void Accept(IVisitor visitor);

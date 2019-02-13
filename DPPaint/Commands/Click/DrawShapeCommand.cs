@@ -65,6 +65,9 @@ namespace DPPaint.Commands.Click
             shape.X = _pointerStart.X;
             shape.Y = _pointerStart.Y;
 
+            shape.Width = 2;
+            shape.Height = 2;
+
             ShapeList.Add(shape);
             current = shape;
 

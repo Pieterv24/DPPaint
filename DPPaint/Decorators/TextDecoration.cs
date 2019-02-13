@@ -188,7 +188,7 @@ namespace DPPaint.Decorators
             }
             else if (_paintBase is TextDecoration innerDecoration)
             {
-                return innerDecoration.RemoveDecorator(decoration);
+                _paintBase = innerDecoration.RemoveDecorator(decoration);
             }
 
             return this;
